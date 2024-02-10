@@ -34,7 +34,8 @@ We want you to come away with an understanding of how Solana and Ethereum are si
 
 ​
 
-(Note: We talk about Ethereum often throughout this series, but all the ideas are applicable for other EVM-compatible blockchains, such as Avalanche and Polygon).
+(*Note: We talk about Ethereum often throughout this series, but all the ideas are applicable for other EVM-compatible blockchains, such as Avalanche and Polygon*).
+
 
 ## All blockchains are decentralized state machines
 
