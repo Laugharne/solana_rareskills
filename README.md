@@ -1,5 +1,7 @@
 [Solana Tutorial | RareSkills](https://www.rareskills.io/solana-tutorial)
 
+# 60 days of Solana - A Solana Course By RareSkills
+
 > This Solana course is designed for engineers with a beginner or intermediate background in Ethereum or EVM development to get up to speed quickly with Solana program development.
 
 ##### The difficulty engineers face when learning blockchain programming for the first time is they have to learn a new computation model, learn a new language, and learn a new development framework.
