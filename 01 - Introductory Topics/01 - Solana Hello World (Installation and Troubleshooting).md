@@ -60,10 +60,31 @@ avm use latest
 **Mac users**: we recommend calling your program `day_1` instead of `day1` because Anchor seems to silently insert underscores on Mac machines sometimes.
 
 ```bash
-anchor init day1 # use day_1 if you have a mac
+anchor init day_1 # use day_1 if you have a mac
 cd day1
 anchor build
 ```
+**To fix my problems !**
+
+```bash
+rustc --version
+solana --version
+anchor --version
+```
+```
+rustc 1.76.0 (07dca489a 2024-02-04)
+solana-cli 1.17.4 (src:2e5a20f7; feat:2295605592, client:SolanaLabs)
+anchor-cli 0.29.0
+```
+`day01` --> `day_01`
+`cargo update -p ahash@0.8.8 --precise 0.8.6`
+`cargo update -p solana-program@1.18.1 --precise ver`
+
+Where ver = `1.17.4`
+`cargo update -p solana-program@1.18.1 --precise 1.17.4`
+
+`anchor build`
+
 
 Depending on your machine and internet connection, this step may take a while. This is also where you are likely to run into installation problems, so please see the troubleshooting section if necessary.
 
@@ -93,6 +114,9 @@ Go back to the shell with the Anchor project and run the following command:
 # shell 1
 anchor keys sync
 ```
+```
+All program id declarations are synced.
+```
 
 ## Run the tests
 
@@ -103,7 +127,7 @@ Run this in the Anchor project
 anchor test --skip-local-validator
 ```
 
-The command above runs the test for our program. If you have not already created a test wallet, Anchor will give you instructions for how to do so. We do not provide those instructions here because it will be dependent on your OS and file structure. You may also need to airdrop yourself some local Sol by running **solana airdrop 100 {YOUR_WALLET_ADDRESS}** in the terminal. You can get your wallet address by running **solana address** in the command line.
+The command above runs the test for our program. If you have not already created a test wallet, Anchor will give you instructions for how to do so. We do not provide those instructions here because it will be dependent on your OS and file structure. You may also need to airdrop yourself some local Sol by running **solana airdrop 100 {YOUR_WALLET_ADDRESS}** in the terminal. You can get your wallet address by running `solana address` in the command line.
 
   
 
@@ -150,6 +174,18 @@ Open that file to see the logged "Hello world"
 
 ![](2024-02-13-10-46-54.png)
 
+```log
+Streaming transaction logs mentioning CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1. Confirmed commitment
+Transaction executed in slot 1539:
+  Signature: 38WBzGAgABZRdU7ogenKLwbw7j9gCXMdeVgutQCTEVCnmrKWb63nN5ZJ9FwtA8aahMkQQ1Xdef9KhErwVsNNzyi4
+  Status: Ok
+  Log Messages:
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 invoke [1]
+    Program log: Instruction: Initialize
+    Program log: Hello, world!
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 consumed 385 of 200000 compute units
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 success
+```
 
 ## Realtime Solana logs
 
@@ -162,6 +198,18 @@ solana logs
 
 Now run the test again, and you should see the same message in the terminal where you ran **solana logs**.
 
+```log
+Transaction executed in slot 2361:
+  Signature: 4qWt7HyAZqnZH6dvojfSEME8uhpGpMsgJUtKzMd7TcRgz5d5ChuvZ9Ke3PaWWiLqbkaj3E2nkG8ABh7E8WFbsser
+  Status: Ok
+  Log Messages:
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 invoke [1]
+    Program log: Instruction: Initialize
+    Program log: Hello, world!
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 consumed 385 of 200000 compute units
+    Program CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1 success
+
+```
 
 ## Questions and Answers
 
