@@ -1,0 +1,200 @@
+ 1822  ll
+ 1823  cd code/
+ 1824  ll
+ 1825  sc git_profile
+ 1826  code .
+ 1827  git status 
+ 1828  git add .
+ 1829  gitcommit -m "Add Calyptus 'rust-101-for-solana' fork"
+ 1830  git commit -m "Add Calyptus 'rust-101-for-solana' fork"
+ 1831  gitpush
+ 1832  solana config get
+ 1833  solana config set --url devnet
+ 1834  solana config get
+ 1835  lssc
+ 1836  sc publication
+ 1837  cd pow_pos_poh/
+ 1838  ll
+ 1839  code .
+ 1840  git status 
+ 1841  git add .
+ 1842  git commit -m "Correctif 2024-02-12"
+ 1843  gitpush
+ 1844  cd ..
+ 1845  ll
+ 1846  sc learning
+ 1847  cd "Solana Blockchain Developer Foundation - Rust and Typescript"/
+ 1848  ll
+ 1849  cd "Section 05 - Create an NFT project (Real Utility Token)"/
+ 1850  ll
+ 1851  cd Mint-Solana-NFT-Minimalist-Marketplace/
+ 1852  ll
+ 1853  cd ..
+ 1854  code .
+ 1855  ll
+ 1856  cd ..
+ 1857  ll
+ 1858  cat solhunt.md 
+ 1859  ll
+ 1860  tree
+ 1861  tree --gitignore
+ 1862  cd playground/
+ 1863  ll
+ 1864  anchor --version
+ 1865  anchor init day01
+ 1866  ll
+ 1867  cd day01/
+ 1868  ll
+ 1869  anchor build
+ 1870  solana --version
+ 1871  cargo update -p ahash@0.8.8 --precise 1.17.4
+ 1872  avm --version
+ 1873  solana --version
+ 1874  rustc --version
+ 1875  anchor --version
+ 1876  cargo update -p ahash@0.8.8 --precise 0.8.6
+ 1877  anchor build
+ 1878  cargo update -p solana-program@1.18.1 --precise 1.17.4
+ 1879  anchor build
+ 1880  rustc --version
+ 1881  anchor --version
+ 1882  solana --versionsolana --version
+ 1883  solana --version
+ 1884  anchor keys sync
+ 1885  anchor test --skip-local-validator
+ 1886  solana-test-validator
+ 1887  history 
+ 1888  bcli
+ 1889  mv history.log ./workspace/learning/solana_rareskills/playground/
+ 1890  exit
+ 1891  sc learning
+ 1892  cd solana_rareskills/
+ 1893  ll
+ 1894  mkdir playground
+ 1895  ne .gitignore
+ 1896  tree --gitignore
+ 1897  ll
+ 1898  cd playground/
+ 1899  ll
+ 1900  cd day01/
+ 1901  ll
+ 1902  cd ..
+ 1903  ll
+ 1904  bcli
+ 1905  ll
+ 1906  batcat history.log 
+ 1907  rm history.log 
+ 1908  ll
+ 1909  batcat history.log 
+ 1910  cd ~
+ 1911  batcat .bashrc 
+ 1912  batcat .bash_functions 
+ 1913  batcat .bash_aliases 
+ 1914  sc learning
+ 1915  cd solana_rareskills/
+ 1916  ll
+ 1917  git status 
+ 1918  tree --gitignore
+ 1919  tree
+ 1920  tree -d 2
+ 1921  tree -d=2
+ 1922  tree -L 2
+ 1923  cd playground/
+ 1924  ll
+ 1925  cd day01/
+ 1926  ll
+ 1927  cd ..
+ 1928  ll
+ 1929  sudo snap
+ 1930  sudo snap info docker
+ 1931  ll
+ 1932  anchor init day_01
+ 1933  ll
+ 1934  cd day_01/
+ 1935  ll
+ 1936  cd ..
+ 1937  ll
+ 1938  mkdir solana_test_validator
+ 1939  ll
+ 1940  cd sol_node/
+ 1941  ll
+ 1942  cd ..
+ 1943  ll
+ 1944  cd day_01/
+ 1945  ll
+ 1946  anchor keys sync
+ 1947  solana config get
+ 1948  solana config set --url localhost
+ 1949  anchor keys sync
+ 1950  anchor test --skip-local-validator
+ 1951  cargo update -p ahash@0.8.8 --precise 0.8.6
+ 1952  history 
+ 1953  anchor build
+ 1954  cargo update -p solana-program@1.18.1 --precise 1.17.4
+ 1955  anchor build
+ 1956  history 
+ 1957  anchor keys sync
+ 1958  anchor test --skip-local-validator
+ 1959  solana address
+ 1960  solana airdrop 100 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j
+ 1961  code .
+ 1962  anchor test --skip-local-validator
+ 1963  solana logs
+ 1964  anchor test --skip-local-validator
+ 1965  cd ../..
+ 1966  ll
+ 1967  code .
+ 1968  git status 
+ 1969  l
+ 1970  ll
+ 1971  git add .
+ 1972  git commit -m "2024-02-13"
+ 1973  gitpush
+ 1974  ll
+ 1975  cd solana_test_validator/cd..
+ 1976  ll
+ 1977  mv solana_test_validator/ test_validator_node
+ 1978  ll
+ 1979  mv test_validator_node/ sol_node
+ 1980  ll
+ 1981  cd sol_node/
+ 1982  solana-test_validator
+ 1983  ll
+ 1984  solana-test-validator
+ 1985  solana logs
+ 1986  cd playground/day01/
+ 1987  ll
+ 1988  cd test-ledger/
+ 1989  ll
+ 1990  cd ..
+ 1991  ll
+ 1992  rm admin.rpc 
+ 1993  ll
+ 1994  rustc --version
+ 1995  sc learning
+ 1996  cd docker/udemy/
+ 1997  ll
+ 1998  code .
+ 1999  git status 
+ 2000  cd playground/
+ 2001  ll
+ 2002  anchor init day_2
+ 2003  anchor init day_02
+ 2004  cd day_02
+ 2005  anchor build
+ 2006  solana --version
+ 2007  cargo update -p solana-program@1.18.1 --precise 1.17.4
+ 2008  anchor build
+ 2009  cargo update -p ahash@0.8.8 --precise 0.8.6
+ 2010  anchor build
+ 2011  cargo update -p solana-program@1.18.1 --precise 1.17.4
+ 2012  anchor build
+ 2013  solana --version
+ 2014  cargo update -p solana-program@1.18.2 --precise 1.17.4
+ 2015  anchor build
+ 2016  history 
+ 2017  anchor test --skip-local-validator
+ 2018  solana config set --url localhost
+ 2019  anchor keys sync
+ 2020  anchor test --skip-local-validator
+ 2021  bcli

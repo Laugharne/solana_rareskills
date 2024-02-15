@@ -80,7 +80,7 @@ anchor-cli 0.29.0
 `cargo update -p ahash@0.8.8 --precise 0.8.6`
 `cargo update -p solana-program@1.18.1 --precise ver`
 
-Where ver = `1.17.4`
+Where `ver` = `1.17.4`
 `cargo update -p solana-program@1.18.1 --precise 1.17.4`
 
 `anchor build`

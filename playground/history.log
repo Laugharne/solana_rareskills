@@ -1,0 +1,200 @@
+ 1802  cd solana_rareskill/
+ 1803  git init
+ 1804  ll
+ 1805  ne "60 days of Solana - A Solana course by RareSkill.md"
+ 1806  ll
+ 1807  code .
+ 1808  cd ..
+ 1809  ll
+ 1810  mv solana_rareskill/ solana_rareskills/
+ 1811  ll
+ 1812  cd solana_rareskills/
+ 1813  ll
+ 1814  git init
+ 1815  cd ../solana_calyptus/
+ 1816  ll
+ 1817  cd ../solana_rareskills/
+ 1818  git add .
+ 1819  git commit -m "2024-02-10""
+ 1820  git commit -m "2024-02-10"
+ 1821  code .
+ 1822  git remote add origin https://github.com/Laugharne/solana_rareskills.git
+ 1823  git branch -M main
+ 1824  git push -u origin main
+ 1825  git add .
+ 1826  git commit -m "2024-02-10"
+ 1827  gitpush
+ 1828  git add .
+ 1829  git commit -m "2024-02-10"
+ 1830  gitpush
+ 1831  sc learning
+ 1832  cd docker/udemy/
+ 1833  ll
+ 1834  git status 
+ 1835  code .
+ 1836  git status 
+ 1837  git add .
+ 1838  git commit -m "2024-02-10"
+ 1839  gitpush
+ 1840  sc learning
+ 1841  cd solana_calyptus/
+ 1842  ll
+ 1843  code .
+ 1844  ll
+ 1845  mkdir code
+ 1846  ll
+ 1847  cd code/
+ 1848  ll
+ 1849  solana --version
+ 1850  solana-keygen --version
+ 1851  rustc --version
+ 1852  cargo --version
+ 1853  solana-keygen new
+ 1854  solana-keygen new --force
+ 1855  solana config get
+ 1856  solana config set --url mainnet-beta
+ 1857  solana airdrop
+ 1858  solana airdrop 2
+ 1859  solana airdrop 1
+ 1860  solana balance
+ 1861  cat /home/franck/.config/solana/id.json 
+ 1862  solana airdrop 1
+ 1863  solana config set --url devnet
+ 1864  solana airdrop 2
+ 1865  solana airdrop 1
+ 1866  solana airdrop 2 CZt73weazuzJBdCzTR1y2Kt1yrDMjCvmJKhcTJcB7HtE --url devnet
+ 1867  solana airdrop 1
+ 1868  solana balance
+ 1869  solana airdrop 0.1 CZt73weazuzJBdCzTR1y2Kt1yrDMjCvmJKhcTJcB7HtE --url devnet
+ 1870  solana config get
+ 1871  cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+ 1872  avm install latest
+ 1873  echo PATH
+ 1874  echo $PATH
+ 1875  batcat .bashrc
+ 1876  batcat ~/.bashrc
+ 1877  env
+ 1878  env | grep "PATH"
+ 1879  ll ~/.bash*
+ 1880  ll ~/.pro*
+ 1881  batcat ~/.profile 
+ 1882  echo $PATH
+ 1883  solana-keygen new --force
+ 1884  cat /home/franck/.config/solana/id.json 
+ 1885  solana config get
+ 1886  solana airdrop
+ 1887  solana airdrop 1
+ 1888  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j --url devnet
+ 1889  solana config set --url mainnet-beta
+ 1890  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j --url devnet
+ 1891  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j
+ 1892  solana airdrop 1
+ 1893  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j --url mainnet-beta
+ 1894  solana config set --url devnet
+ 1895  solana config set --url https://api.devnet.solana.com
+ 1896  solana airdrop 1
+ 1897  ne ~/.profile 
+ 1898  solana airdrop 1
+ 1899  solana config set --url localhost
+ 1900  solana airdrop 1
+ 1901  solana balance
+ 1902  solana-test-validator
+ 1903  sc learning
+ 1904  cd solana_calyptus/
+ 1905  ll
+ 1906  code .
+ 1907  ll
+ 1908  cd code/
+ 1909  ll
+ 1910  ls -l
+ 1911  cd ..
+ 1912  ll
+ 1913  cd code
+ 1914  cargo install spl-token-cli
+ 1915  echo $PATH
+ 1916  spl-token --version
+ 1917  solana config get
+ 1918  solana airdrop 0.1
+ 1919  spl-oken --version
+ 1920  spl-token --version
+ 1921  solana balance
+ 1922  solana airdrop 1
+ 1923  solana config get
+ 1924  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j --url devnet
+ 1925  solana config set --url testnet
+ 1926  solana airdrop 1 2mcDUMsXbfzeiyr8cNd4XrTp2uwKySC6ujGmCVfBfQ3j --url testnet
+ 1927  solana balance
+ 1928  solana config get
+ 1929  solana balance
+ 1930  cd ..
+ 1931  git status 
+ 1932  git add .
+ 1933  git commit -m "2024-02-12"
+ 1934  gitpush
+ 1935  ll
+ 1936  cd code/
+ 1937  ll
+ 1938  sc git_profile
+ 1939  code .
+ 1940  git status 
+ 1941  git add .
+ 1942  gitcommit -m "Add Calyptus 'rust-101-for-solana' fork"
+ 1943  git commit -m "Add Calyptus 'rust-101-for-solana' fork"
+ 1944  gitpush
+ 1945  solana config get
+ 1946  solana config set --url devnet
+ 1947  solana config get
+ 1948  lssc
+ 1949  sc publication
+ 1950  cd pow_pos_poh/
+ 1951  ll
+ 1952  code .
+ 1953  git status 
+ 1954  git add .
+ 1955  git commit -m "Correctif 2024-02-12"
+ 1956  gitpush
+ 1957  cd ..
+ 1958  ll
+ 1959  sc learning
+ 1960  cd "Solana Blockchain Developer Foundation - Rust and Typescript"/
+ 1961  ll
+ 1962  cd "Section 05 - Create an NFT project (Real Utility Token)"/
+ 1963  ll
+ 1964  cd Mint-Solana-NFT-Minimalist-Marketplace/
+ 1965  ll
+ 1966  cd ..
+ 1967  code .
+ 1968  ll
+ 1969  cd ..
+ 1970  ll
+ 1971  cat solhunt.md 
+ 1972  ll
+ 1973  tree
+ 1974  tree --gitignore
+ 1975  cd playground/
+ 1976  ll
+ 1977  anchor --version
+ 1978  anchor init day01
+ 1979  ll
+ 1980  cd day01/
+ 1981  ll
+ 1982  anchor build
+ 1983  solana --version
+ 1984  cargo update -p ahash@0.8.8 --precise 1.17.4
+ 1985  avm --version
+ 1986  solana --version
+ 1987  rustc --version
+ 1988  anchor --version
+ 1989  cargo update -p ahash@0.8.8 --precise 0.8.6
+ 1990  anchor build
+ 1991  cargo update -p solana-program@1.18.1 --precise 1.17.4
+ 1992  anchor build
+ 1993  rustc --version
+ 1994  anchor --version
+ 1995  solana --versionsolana --version
+ 1996  solana --version
+ 1997  anchor keys sync
+ 1998  anchor test --skip-local-validator
+ 1999  solana-test-validator
+ 2000  history 
+ 2001  bcli

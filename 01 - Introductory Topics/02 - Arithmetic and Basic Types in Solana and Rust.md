@@ -25,11 +25,19 @@ contract Day2 {
 
 Let’s start a new project
 ```bash
-anchor init day2
-cd day2
+anchor init day_02
+cd day_02
 anchor build
 anchor keys sync
 ```
+--------
+```bash
+cargo update -p ahash@0.8.8 --precise 0.8.6
+anchor build
+cargo update -p solana-program@1.18.2 --precise 1.17.4
+anchor build
+```
+--------
 
 Be sure you have the Solana test validator running in one terminal:
 
@@ -78,8 +86,8 @@ pub fn initialize(ctx: Context<Initialize>,
 Now we need to change the test in `./tests/day2.ts`
 
 ```typescript
-it("Is initialized!", async () => { // Add your test here. const tx = await program.methods
-    .initialize(new anchor.BN(777), new anchor.BN(888)).rpc();
+it("Is initialized!", async () => { // Add your test here.
+  const tx = await program.methods.initialize(new anchor.BN(777), new anchor.BN(888)).rpc();
   console.log("Your transaction signature", tx);
 });
 ```
@@ -110,7 +118,8 @@ pub fn initialize(ctx: Context<Initialize>,
 And change the test
 
 ```typescript
-it("Is initialized!", async () => { // Add your test here. const tx = await program.methods
+it("Is initialized!", async () => { // Add your test here.
+  const tx = await program.methods
     .initialize( new anchor.BN(777), new anchor.BN(888), "hello").rpc();
     console.log("Your transaction signature", tx);
 });
@@ -145,12 +154,14 @@ pub fn array(ctx: Context<Initialize>,
 And we update the unit test as follows
 
 ```typescript
-it("Is initialized!", async () => { // Add your test here. const tx = await program.methods.initialize(new anchor.BN(777), new anchor.BN(888), "hello").rpc();
+it("Is initialized!", async () => { // Add your test here.
+  const tx = await program.methods.initialize(new anchor.BN(777), new anchor.BN(888), "hello").rpc();
   console.log("Your transaction signature", tx);
 });
 
-// added this test it("Array test", async () => {
-  const tx = await program.methods.array(\[new anchor.BN(777), new anchor.BN(888)\]).rpc();
+// added this test
+it("Array test", async () => {
+  const tx = await program.methods.array([new anchor.BN(777), new anchor.BN(888)]).rpc();
   console.log("Your transaction signature", tx);
 });
 ```
