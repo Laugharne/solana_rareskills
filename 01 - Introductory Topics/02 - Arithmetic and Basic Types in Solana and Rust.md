@@ -2,7 +2,7 @@
 
 # Arithmetic and Basic Types in Solana and Rust
 
-![](2024-02-13-16-38-00.png)
+![](assets/2024-02-13-16-38-00.png)
 
 Today we will learn how to create a Solana program that accomplishes the same things as the Solidity contract below. We will also learn how Solana handles arithmetic issues like overflow.
 
@@ -97,7 +97,7 @@ Now re-run `anchor test --skip-local-validator`.
 
 When we look in the logs, we should see something like the following
 
-![](2024-02-13-16-42-06.png)
+![](assets/2024-02-13-16-42-06.png)
 
 
 ### Passing a string
@@ -168,7 +168,7 @@ it("Array test", async () => {
 
 And we run the tests again and view the logs to see the array output:
 
-![](2024-02-13-16-47-24.png)
+![](assets/2024-02-13-16-47-24.png)
 
 Tip: If you are stuck with an issue on your Anchor tests, try googling for “[Solana web3 js](https://solana-labs.github.io/solana-web3.js/)” as it relates to your error. The Typescript library used by Anchor is the Solana web3 js library.
 
@@ -198,7 +198,7 @@ Arithmetic overflow was a common attack vector in Solidity until version 0.8.0 b
 
 If the key `overflow-checks` is set to `true` in the **Cargo.toml** file, then Rust will add overflow checks at the compiler level. See the screenshot of Cargo.toml next:
 
-![](2024-02-13-16-48-58.png)
+![](assets/2024-02-13-16-48-58.png)
 
 If the Cargo.toml file is configured in this manner, you don’t need to worry about overflow.
 
@@ -225,7 +225,7 @@ let xSafe: u64 = y.checked_add(z).unwrap(); // will panic if overflow happens
 
 You’ll see the transaction fails (with a rather cryptic error message shown below) when the test runs. That’s because Anchor turned on overf  low protection:
 
-![](2024-02-13-16-54-02.png)
+![](assets/2024-02-13-16-54-02.png)
 
 **Exercise 2:** Now change `overflow-checks` to `false`, then run the test again. You should see an underflow value of **18446744073709551615**.
 
@@ -248,11 +248,11 @@ The Solana logs terminal also shows how many compute units were used. We’ve pr
 
 With overflow **protection disabled** consumes **824** compute units:
 
-![](2024-02-13-16-57-18.png)
+![](assets/2024-02-13-16-57-18.png)
 
 With overflow **protection enabled** in consumes **872** compute units:
 
-![](2024-02-13-16-58-01.png)
+![](assets/2024-02-13-16-58-01.png)
 
 As you can see, just doing a simple math operation takes up almost 1000 units. Since we have 200k units, we can only do a **few hundred simple arithmetic operations** within the per-transaction **gas limit**. So, while transactions on Solana are generally cheaper than on Ethereum, we are still limited by a relatively small compute unit cap and would not be able to carry out computationally intensive tasks like fluid dynamic simulations on the Solana chain.
 
@@ -296,6 +296,6 @@ pub fn initialize(ctx: Context<Initialize>, a: f32) -> Result<()> {
 
 Remember how we said in an earlier section that floats can be computationally expensive? Well, here we see our cube root operation consumed over 5 times as much as simple arithmetic on unsigned integers:
 
-![](2024-02-13-17-02-58.png)
+![](assets/2024-02-13-17-02-58.png)
 
 **Exercise 4:** Build a calculator that does the **+**, **-**, **x**, and **÷**. and also **sqrt** and **log10**.

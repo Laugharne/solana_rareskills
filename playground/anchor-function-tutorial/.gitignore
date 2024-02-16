@@ -1,8 +1,3 @@
-playground/sol_node/
-*history.log
-**/target/
-**/node_modules/
-
 
 .anchor
 .DS_Store

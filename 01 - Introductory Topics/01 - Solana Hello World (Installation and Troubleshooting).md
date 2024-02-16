@@ -4,7 +4,7 @@
 
 Updated: 4 days ago
 
-![](2024-02-13-10-30-06.png)
+![](assets/2024-02-13-10-30-06.png)
 
 
 This is a Solana hello world tutorial. We will walk you through the steps to install Solana and troubleshoot issues that may arise.
@@ -133,7 +133,7 @@ The command above runs the test for our program. If you have not already created
 
 The expected output is as follows:
 
-![](2024-02-13-10-44-16.png)
+![](assets/2024-02-13-10-44-16.png)
 
 ## Hello World
 
@@ -172,7 +172,7 @@ ls .anchor/program-logs/
 
 Open that file to see the logged "Hello world"
 
-![](2024-02-13-10-46-54.png)
+![](assets/2024-02-13-10-46-54.png)
 
 ```log
 Streaming transaction logs mentioning CH6XVmiuwgHHv1FbhyAojB9cGX7zTdsSmNys5menUvj1. Confirmed commitment
@@ -231,7 +231,7 @@ There is nothing special about the name initialize in this context, and so we c
 
 **Exercise**: Try renaming **initialize** in `programs/day_1/src/lib.rs` and **initialize** in `tests/day_1.ts` to become **initialize2** and run the test again. See the change marked in the orange circles below.
 
-![](2024-02-13-10-51-12.png)
+![](assets/2024-02-13-10-51-12.png)
 
 ###   
 
@@ -279,7 +279,7 @@ cargo update -p solana-program@1.18.0 --precise ver
 
 Check the version of Solana you are running using `solana --version`. then plug that version into the **ver** above. An example resolution is shown below:
 
-![](2024-02-13-10-54-04.png)
+![](assets/2024-02-13-10-54-04.png)
   
 
 ### error[E0658]: use of unstable library feature 'build_hasher_simple_hash_one'

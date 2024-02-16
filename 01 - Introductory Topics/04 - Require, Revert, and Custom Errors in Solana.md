@@ -2,7 +2,7 @@
 
 # Require, Revert, and Custom Errors in Solana
 
-![](2024-02-14-16-41-04.png)
+![](assets/2024-02-14-16-41-04.png)
 
 In Ethereum, we often see a require statement restricting the values a function argument can have. Consider the following example:
 
@@ -13,12 +13,21 @@ function foobar(uint256 x) public {
 }
 ```
 
-In the code above, the transaction will revert if `foobar` is passed a value of 100 or greater.
+In the code above, the transaction will revert if `foobar` is passed a value of **100 or greater**.
 
 How do we do this in Solana, or specifically, in the Anchor framework?
 
+Anchor has equivalents for **Solidity**’s custom **error** and **require** statements. Their [documentation](https://www.anchor-lang.com/docs/errors) on the subject is quite good, but we will also explain how to halt transactions when the function arguments are not what we want them to be.
 
-Anchor has equivalents for Solidity’s custom error and require statements. Their [documentation](https://www.anchor-lang.com/docs/errors) on the subject is quite good, but we will also explain how to halt transactions when the function arguments are not what we want them to be.
+```bash
+anchor init day_04
+cd day_04
+anchor build
+cargo update -p solana-program@1.18.2 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.8 --precise 0.8.6
+anchor build
+```
 
 The Solana program below has a function `limit_range` which will only accept values 10 to 100 inclusive:
 
@@ -60,7 +69,7 @@ The following code unit tests the program above:
 ```javascript
 import * as anchor from "@coral-xyz/anchor";
 import { Program, AnchorError } from "@coral-xyz/anchor";
- import { Day4 } from "../target/types/day4";
+import { Day4 } from "../target/types/day4";
 import { assert } from "chai";
 
 describe("day4", () => { // Configure the client to use the local cluster.
@@ -87,6 +96,18 @@ describe("day4", () => { // Configure the client to use the local cluster.
   });
 }); 
 ```
+
+```
+  day_04
+Error number: 6001
+Error number: 6000
+    ✔ Input test (48ms)
+
+
+  1 passing (50ms)
+```
+
+
 
 **Exercise**:
 
@@ -141,6 +162,17 @@ it("Error test", async () => { // Add your test here. try {
 
 Before you run this, what do you think the new error code will be?
 
+```
+  day_04
+Error number: 6000
+Error number: 6001
+    ✔ Input test (57ms)
+Error number: 6002
+    ✔ Error test
+
+
+  2 passing (68ms)
+```
 The significant difference between how Ethereum and Solana stops transactions with invalid parameters is that Ethereum triggers a revert and Solana returns an error.
 
 
@@ -199,7 +231,6 @@ The expected result is that *“Will this print?”* will print when you return 
 The `require` statement **halts** the execution with the `revert` op code.
 
 **Solana** does **not halt** execution but simply **returns a different value**. This is analogous to how linux returns 0 or 1 on success. If a 0 is returned (equivalent of returning `Ok(())`), everything went smoothly.
-
 
 > Therefore, Solana programs **should always** return something — either an `Ok(())` or an `Error`.
 
