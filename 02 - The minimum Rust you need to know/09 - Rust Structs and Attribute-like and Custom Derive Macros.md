@@ -8,18 +8,17 @@
 
   
 
-To understand attribute-like and custom derive macros in Rust, we first need to briefly cover implementation structs in Rust.
+To understand **attribute-like** and custom **derive** macros in Rust, we first need to briefly cover implementation structs in Rust.
 
-  
 
 ## Implementations for structs: impl
 
-The following struct should be straightforward to understand. What gets interesting is when we create functions that operate on a particular struct. The way we do this is with `impl`:
+The following struct should be straightforward to understand. What gets interesting is when we create functions that operate on a particular `struct`. The way we do this is with `impl`:
 
 ```rust
 struct Person {
     name: String,
-    age: u8,
+    age:  u8,
 }
 ```
 
@@ -27,15 +26,15 @@ Associated functions and methods are implemented for structs inside the `impl` b
 
 Associated functions can be compared to the scenario in Solidity where a library is created for interacting with a struct. When we define **using lib for MyStruct**, it allows us to use the syntax `myStruct.associatedFunction()`. This gives the function access to `myStruct` via the `Self` keyword.
 
-We recommend using the [**Rust Playground**](https://play.rust-lang.org/) but for more complex examples, you may have to set up your IDE.
+We recommend using the [**Rust Playground**](https://play.rust-lang.org/) but for more complex examples, you may have to set up your **IDE**.
 
 
 Let’s look at an example below:
 
 ```rust
 struct Person {
-    age: u8,
     name: String,
+    age:  u8,
 }
 
 // Implement a method `new()` for the `Person` struct, allowing initialization of a `Person` instance
@@ -79,7 +78,6 @@ person.can_drink(); // false
 person.age_in_one_year(); // 20
 ```
 
-  
 
 ## Rust Traits
 
@@ -87,9 +85,9 @@ Rust traits are a way to implement shared behavior among different impls.
 
 Think of them like an interface or abstract contract in Solidity — any contract that uses the interface must implement certain functions.
 
-For instance, let's say we have a scenario where we need to define a Car and Boat struct. We want to attach a method that allows us to retrieve their speed in kilometers per hour. In Rust, we can accomplish this by using a single trait and sharing the method between the two structs.
+For instance, let's say we have a scenario where we need to define a `Car` and `Boat` struct. We want to attach a method that allows us to retrieve their speed in kilometers per hour.
 
-  
+In Rust, we can accomplish this by using a single trait and sharing the method between the two structs.
 
 This is shown below:
 
@@ -139,18 +137,21 @@ fn main() {
 }
 ```
 
+
 ## How macros can modify structs
 
-In our tutorial on function-like macros, we saw how macros can expand code like `println!(...)` and `msg!(...)` in large Rust code. The other kind of macros we care about in the context of Solana is the attribute-like macro and the derive macro. We can see all three (function-like, attribute-like, and derive) macros in the starter program anchor creates:
+In our tutorial on function-like macros, we saw how macros can expand code like `println!(...)` and `msg!(...)` in large Rust code. The other kind of macros we care about in the context of Solana is the attribute-like macro and the derive macro. We can see all three (**function-like**, **attribute-like**, and **derive**) macros in the starter program anchor creates:
 
 ![](assets/2024-02-17-11-09-01.png)
 
-To get an intuition for what the attribute-like macros is doing, we will create two macros: one to add fields to a struct and another that removes them.
+To get an intuition for what the attribute-like macros is doing, we will create two macros:
+- one to **add fields** to a struct
+- and another that **removes them**.
 
 
 ## Example 1: attribute-like macro, inserting fields
 
-To gain a better understanding of how Rust attributes and macros work, we will create an [attribute-like macro](https://doc.rust-lang.org/book/ch19-06-macros.html) that:
+To gain a better understanding of how Rust attributes and macros work, we will create an [**attribute-like macro**](https://doc.rust-lang.org/book/ch19-06-macros.html) that:
 
 1.  takes a struct which does **not** have the fields `foo` and `bar`, of type `i32`
 2.  inserts those fields into the struct
@@ -162,13 +163,16 @@ To gain a better understanding of how Rust attributes and macros work, we will c
 First we create a **new Rust project**:
 
 ```bash
-cargo new macro-demo --lib cd macro-demo touch src/main.rs
+cargo new macro-demo --lib
+cd macro-demo
+touch src/main.rs
 ```
 
 Add the following to the `Cargo.toml` file:
 
 ```toml
-[lib] proc-macro = true
+[lib]
+proc-macro = true
 
 [dependencies]
 syn = {version="1.0.57",features=["full","fold"]}
@@ -234,6 +238,7 @@ use syn::{parse_macro_input, ItemStruct};
 // The function `foo_bar_attribute` takes two arguments:
 // _metadata: The arguments provided to the macro (if any)
 // _input: The TokenStream the macro is applied to
+//
 pub fn foo_bar_attribute(_metadata: TokenStream, _input: TokenStream) -> TokenStream {
     // Parse the input TokenStream into an AST node representing a struct
     let input = parse_macro_input!(_input as ItemStruct);
@@ -272,7 +277,7 @@ pub fn foo_bar_attribute(_metadata: TokenStream, _input: TokenStream) -> TokenSt
 }
 ```
 
-Now, to test our macro we run the code [in](http://inmain.rs)[main.rs](http://inmain.rs) with cargo run src/main.rs.
+Now, to test our macro we run the code in `main.rs` with `cargo run src/main.rs`.
 
 We get this output:
 
@@ -286,7 +291,19 @@ double foo: 20
 
 The best way to think about attribute-like macros is that they have unlimited power in how they modify the struct. Let’s repeat the example above, but this time the attribute-like macro will remove all the fields from the struct.
 
-  
+```bash
+cargo new macro-demo-2 --lib
+cd macro-demo-2
+touch src/main.rs
+```
+```toml
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = {version="1.0.57",features=["full","fold"]}
+quote = "1.0.8"
+```
 
 Replace `src/lib.rs` with the following:
 
@@ -336,13 +353,12 @@ When you try to compile it with `cargo run src/main.rs` you will get the followi
 
 It may seem odd, because the struct clearly has those fields. However, the attribute-like macro removed them!
 
-  
 
 ## The #[derive(…)] macro
 
 The `#[derive(…)]` macro is much less powerful than the attribute-like macro. For our purposes:
 
-- A derive macro augments a struct, it does not alter it. (*This is not a precise definition, but it is sufficient for now*).
+- A derive macro **augments a struct**, it does not alter it. (*This is not a precise definition, but it is sufficient for now*).
 - A derive macro can, among other things, attach an `impl` to a `struct`.
 
 For example, if we try to do the following:
@@ -387,10 +403,10 @@ The derive attribute “augmented” `Foo` in such a way that `println!` could c
 
 ## Summary
 
-An `impl` is a group of functions that operate on a struct. They are “attached” to the struct by using the same name as the struct. A trait enforces that an `impl` implements certain functions. In our example, we attached the the trait **Speed** to `impl` **Car** using the syntax impl Speed for Car.
-
-- An **attribute-like macro** takes in a `struct` and can completely **rewrite it**.
-- A **derive macro** **augments** a `struct` with **additional functions**.
+- An `impl` is a group of functions that operate on a struct. They are “attached” to the struct by using the same name as the struct.
+- A `trait` enforces that an `impl` implements certain functions. In our example, we attached the the trait **Speed** to `impl` **Car** using the syntax impl Speed for Car.
+- An **`attribute-like`** macro takes in a `struct` and can completely **rewrite it**.
+- A **`derive`** macro **augments** a `struct` with **additional functions**.
 
 
 ### Macros allow Anchor to hide complexity
