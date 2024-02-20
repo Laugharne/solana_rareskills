@@ -431,9 +431,12 @@ We can also see the number **3** highlighted with the **yellow** arrow in both t
 
 > Program log: Number is: **3**
 
-**Exercise**: Access the LastRestartSlot sysvar
+**Exercise**: Access the **LastRestartSlot** sysvar
 
 **SysvarLastRestartS1ot1111111111111111111111** using the method used above. Note that Anchor does not have the address for this sysvar, so you will need to create a **PublicKey** object.
+
+See : [**Solana Sysvar Cluster Data**](https://docs.solanalabs.com/runtime/sysvars)
+
 
 ```
   Status: Ok
