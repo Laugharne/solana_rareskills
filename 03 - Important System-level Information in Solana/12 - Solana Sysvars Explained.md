@@ -6,7 +6,9 @@
 
 In Solana, **sysvars** are **read-only system accounts** that give Solana programs **access to the blockchain state** as well as **network information**. They are similar to Ethereum global variables, which also enable smart contracts to access network or blockchain state information, but they have unique public addresses like the Ethereum precompiles.
 
-In Anchor programs, you can access sysvars in two ways: either by using the anchor’s get method wrapper, or by treating it as an account in your `#[Derive(Accounts)]`, using its public address.
+In **Anchor** programs, you can **access sysvars** in two ways:
+- Either by using the anchor’s get method wrapper.
+- Or by treating it as an account in your `#[Derive(Accounts)]`, using its public address.
 
 Not all sysvars support the `get` method, and some are deprecated (*information on deprecation will be specified in this guide*). For those sysvars that don't have a `get` method, we will access them using their public address.
 
@@ -22,15 +24,25 @@ Not all sysvars support the `get` method, and some are deprecated (*information 
 - **Instructions**: To get access to the serialized instructions that are part of the current transaction.
 - **LastRestartSlot**: Contains the slot number of the last restart (*the last time Solana restarted*) or zero if none ever happened. If the Solana blockchain were to crash and restart, an application can use this information to determine if it should wait until things stabilize.
 
+> **Note :** Le terme **"Lamport"** fait référence à l'algorithme de synchronisation d'horloge utilisé pour maintenir la cohérence de l'horloge entre les nœuds du réseau. Cet algorithme est nommé d'après son inventeur, **Leslie Lamport**, un informaticien et lauréat du prix Turing.
+
+> L'algorithme de Lamport est essentiel dans le protocole de consensus de Solana pour garantir que tous les nœuds du réseau sont synchronisés et ont une compréhension commune du temps. Créant un ordre temporel pour les transactions et les événements sur la blockchain Solana.
+
+> Les nœuds du réseau Solana peuvent maintenir une synchronisation de l'horloge même en présence de latence réseau et de délais variables entre les nœuds. Cela contribue à assurer que tous les validateurs du réseau arrivent à un consensus sur l'ordre des transactions et des événements.
+
 
 ## Differentiating between Solana slots and blocks.
 
-A **slot** is a window of time (*about 400ms*) where a designated leader can produce a block. A slot contains a **block** (*the same kind of block on Ethereum, i.e a list of transactions*). However, a slot might not contain a block if the block leader failed to produce a block during that slot. Their relationship is illustrated below:
+- A **slot** is a window of time (*about 400ms*) where a designated leader can produce a block.
+- A slot contains a **block** (*the same kind of block on Ethereum, i.e a list of transactions*).
+- However, a slot might not contain a block if the block leader failed to produce a block during that slot.
+
+Their relationship is illustrated below:
 
 ![](assets/2024-02-19-21-48-44.png)
 
 Although!
-- **every block maps to exactly one slot**
+- **Every block maps to exactly one slot**
 - The **block hash** is **not** the **same** as the **slot hash**.
 
 This distinction is evident when clicking on a slot number in an explorer, it opens up the details of a block with a different hash.
@@ -49,7 +61,7 @@ Let's take an example from the image below from the Solana block explorer:
 
 We can distinguish between a block and a slot by their unique hashes, even though they have the same numbers.
 
-As a test, click on any slot number in the explorer [**here**](https://explorer.solana.com/address/SysvarS1otHashes111111111111111111111111111/slot-hashes?cluster=testnet) and you will notice that a block page will open. This block will have a different hash from the slot hash.
+As a test, click on any slot number in the explorer [**here**](https://explorer.solana.com/address/SysvarS1otHashes111111111111111111111111111/slot-hashes?cluster=testnet) and you will notice that a block page will open. This **block (hash)** will have a **different** hash from the **slot hash**.
 
 
 ## Accessing Solana Sysvars in Anchor, using the get method
@@ -59,11 +71,21 @@ As mentioned earlier, not all sysvars can be accessed using Anchor’s get meth
 While the Solana documentation includes Fees and EpochRewards as sysvars that can be accessed with the get method, these are **deprecated** in the latest version of Anchor. Therefore, they cannot be called using the get method in Anchor.
 
 We will access and log the contents of all currently supported sysvars using the get method. To begin, we create a **new Anchor project**:
+
 ```bash
 anchor init sysvars
 cd sysvars
 anchor build
+cargo update -p solana-program@1.18.2 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+
+cargo update -p ahash@0.8.9 --precise 0.8.6
+
 ```
+
 
 ### Clock sysvar
 
@@ -89,12 +111,15 @@ pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
 Now, run the test on a local Solana node and check the log:
 - `anchor test --skip-local-validator`
 - `solana-test-validator` (in another terminal)
-- `solana logs`
+- `solana logs` (in another terminal)
 
 You should see something like this:
 
 ![](assets/2024-02-19-21-58-11.png)
 
+```
+Program log: clock: Clock { slot: 31709, epoch_start_timestamp: 1708073675, epoch: 0, leader_schedule_epoch: 1, unix_timestamp: 1708105383 }
+```
 
 ### EpochSchedule sysvar
 
@@ -108,13 +133,15 @@ Update the initialize function with the following code:
 
 ```rust
 pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-    // Get the Clock sysvar
-    let clock = Clock::get()?;
+    // Previous code...
+
+    // Get the EpochSchedule sysvar
+    let epoch = EpochSchedule::get()?;
 
     msg!(
-        "clock: {:?}",
-        // Retrieve all the details of the Clock sysvar
-        clock
+        "epoch: {:?}",
+        // Retrieve all the details of the EpochSchedule sysvar
+        epoch
     );
 
     Ok(())
@@ -125,6 +152,10 @@ After running the test again, the following **log** will be generated:
 
 ![](assets/2024-02-19-22-00-10.png)
 
+```
+Program log: epoch: EpochSchedule { slots_per_epoch: 432000, leader_schedule_slot_offset: 432000, warmup: false, first_normal_epoch: 0, first_normal_slot: 0 }
+```
+
 From the log, we can observe that the EpochSchedule sysvar contains the following fields:
 
 - **slots_per_epoch** highlighted in **yellow** holds the number of slots in each epoch, which is 432,000 slots here.
@@ -133,7 +164,7 @@ From the log, we can observe that the EpochSchedule sysvar contains the followin
 - **first_normal_epoch** highlighted in **orange** identifies the first epoch that can have its slot count
 - And **first_normal_slot** highlighted in **blue** is the slot that starts this epoch. In this case both are 0 (zero).
 
-The reason we see the **first_normal_epoch** and **first_normal_slot** being 0 is because the test validator hasn’t been running for two days. If we were to run this command on the mainnet (*at time of writing*), we would expect to see the **first_normal_epoch** being **576** and the **first_normal_slot** being **248,832,000**.
+> The reason we see the **first_normal_epoch** and **first_normal_slot** being 0 is because the test validator hasn’t been running for two days. If we were to run this command on the mainnet (*at time of writing*), we would expect to see the **first_normal_epoch** being **576** and the **first_normal_slot** being **248,832,000**.
 
 ![](assets/2024-02-19-22-02-34.png)
 
@@ -164,6 +195,10 @@ Run the test, we get this **log**:
 
 ![](assets/2024-02-19-22-03-57.png)
 
+```
+Program log: Rent Rent { lamports_per_byte_year: 3480, exemption_threshold: 2.0, burn_percent: 50 }
+```
+
 The Rent sysvar in Solana has three key fields:
 
 - **lamports_per_byte_year**
@@ -172,7 +207,7 @@ The Rent sysvar in Solana has three key fields:
 
 ----
 - The **lamports_per_byte_year** highlighted in **yellow** indicates the number of lamports required per byte per year for rent exemption.
-- The **exemption_threshold** highlighted in **red** is a multiplier used to calculate the minimum balance needed for rent exemption. In this example, we see we need to pay 3480 x 2 = 6960 lamports per byte to create a new account.
+- The **exemption_threshold** highlighted in **red** is a multiplier used to calculate the minimum balance needed for rent exemption. In this example, we see we need to pay **3480 x 2 = 6960** lamports per byte to create a new account.
 - 50% of that is burned (**burn_percent** highlighted in **purple**) to manage Solana inflation.
 
 The concept of **"rent"** will be fully explained in a later tutorial.
@@ -201,7 +236,9 @@ pub struct Initialize<'info> {
 }
 ```
 
-We ask the reader to treat the new syntax as boilerplate for now. The /`// CHECK:` and `AccountInfo` will be explained in a later tutorial. For the curious, the `<’info>` token is a [**Rust lifetime**](https://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/book/first-edition/lifetimes.html).
+We ask the reader to treat the new syntax as **boilerplate** for now. The /`// CHECK:` and `AccountInfo` will be explained in a later tutorial.
+
+For the curious, the `<’info>` token is a [**Rust lifetime**](https://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/book/first-edition/lifetimes.html).
 
 Next, we add the following code to the `initialize()` function.
 
@@ -346,16 +383,99 @@ describe("sysvars", () => {
 
 And run the test:
 
+```
+Status: Ok
+Log Messages:
+  Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 invoke [1]
+  Program log: Instruction: Initialize
+  Program log: clock: Clock { slot: 37261, epoch_start_timestamp: 1708073675, epoch: 0, leader_schedule_epoch: 1, unix_timestamp: 1708110935 }
+  Program log: epoch: EpochSchedule { slots_per_epoch: 432000, leader_schedule_slot_offset: 432000, warmup: false, first_normal_epoch: 0, first_normal_slot: 0 }
+  Program log: Rent Rent { lamports_per_byte_year: 3480, exemption_threshold: 2.0, burn_percent: 50 }
+  Program log: Instruction details of this transaction: Instruction { program_id: 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9, accounts: [AccountMeta { pubkey: SysvarStakeHistory1111111111111111111111111, is_signer: false, is_writable: false }, AccountMeta { pubkey: SysvarRecentB1ockHashes11111111111111111111, is_signer: false, is_writable: false }, AccountMeta { pubkey: Sysvar1nstructions1111111111111111111111111, is_signer: false, is_writable: false }], data: [175, 175, 109, 31, 13, 152, 155, 237, 3, 0, 0, 0] }
+  Program log: Number is: 3
+  Program log: stake_history: StakeHistory([])
+  Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 consumed 68536 of 200000 compute units
+  Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 success
+```
+```json
+Instruction {
+  program_id: 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9,
+  accounts: [
+    AccountMeta {
+      pubkey:      SysvarStakeHistory1111111111111111111111111,
+      is_signer:   false,
+      is_writable: false
+    },
+    AccountMeta {
+      pubkey:      SysvarRecentB1ockHashes11111111111111111111,
+      is_signer:   false,
+      is_writable: false
+    },
+    AccountMeta {
+      pubkey:      Sysvar1nstructions1111111111111111111111111, 
+      is_signer:   false,
+      is_writable: false
+    }
+  ],
+  data: [175, 175, 109, 31, 13, 152, 155, 237, 3, 0, 0, 0]
+}
+```
+
 ![](assets/2024-02-19-22-16-32.png)
 
 If we closely examine the log, we can see the program Id, the public key of the sysvar instruction, the serialized data, and other metadata.
 
 We can also see the number **3** highlighted with the **yellow** arrow in both the serialized instruction data and our own program log. The **serialized data** highlighted in **red** is a discriminator injected by Anchor (*we can ignore that*).
 
+> data: [175, 175, 109, 31, 13, 152, 155, 237, **3**, 0, 0, 0]
+
+> Program log: Number is: **3**
 
 **Exercise**: Access the LastRestartSlot sysvar
 
 **SysvarLastRestartS1ot1111111111111111111111** using the method used above. Note that Anchor does not have the address for this sysvar, so you will need to create a **PublicKey** object.
+
+```
+  Status: Ok
+  Log Messages:
+    Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 invoke [1]
+    Program log: Instruction: Initialize
+    Program log: clock: Clock { slot: 43452, epoch_start_timestamp: 1708073675, epoch: 0, leader_schedule_epoch: 1, unix_timestamp: 1708117126 }
+    Program log: epoch: EpochSchedule { slots_per_epoch: 432000, leader_schedule_slot_offset: 432000, warmup: false, first_normal_epoch: 0, first_normal_slot: 0 }
+    Program log: Rent Rent { lamports_per_byte_year: 3480, exemption_threshold: 2.0, burn_percent: 50 }
+    Program log: Instruction details of this transaction: Instruction { program_id: 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9, accounts: [AccountMeta { pubkey: SysvarStakeHistory1111111111111111111111111, is_signer: false, is_writable: false }, AccountMeta { pubkey: SysvarRecentB1ockHashes11111111111111111111, is_signer: false, is_writable: false }, AccountMeta { pubkey: Sysvar1nstructions1111111111111111111111111, is_signer: false, is_writable: false }, AccountMeta { pubkey: SysvarLastRestartS1ot1111111111111111111111, is_signer: false, is_writable: false }], data: [175, 175, 109, 31, 13, 152, 155, 237, 3, 0, 0, 0] }
+    Program log: Number is: 3
+    Program log: stake_history: StakeHistory([])
+    Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 consumed 81290 of 200000 compute units
+    Program 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9 success
+```
+```json
+Instruction {
+  program_id: 6aHtT7SNv7myvhZCPBUGsXmUuatTs4jqygHFNmcMDmS9,
+  accounts: [
+    AccountMeta {
+      pubkey: SysvarStakeHistory1111111111111111111111111,
+      is_signer: false,
+      is_writable: false
+    },
+    AccountMeta {
+      pubkey: SysvarRecentB1ockHashes11111111111111111111,
+      is_signer: false,
+      is_writable: false
+    },
+    AccountMeta {
+      pubkey: Sysvar1nstructions1111111111111111111111111,
+      is_signer: false,
+      is_writable: false
+    },
+    AccountMeta {
+      pubkey: SysvarLastRestartS1ot1111111111111111111111,
+      is_signer: false,
+      is_writable: false
+    }
+  ],
+  data: [175, 175, 109, 31, 13, 152, 155, 237, 3, 0, 0, 0] }
+```
 
 
 ## Solana Sysvars that cannot be accessed in the current version of Anchor.
