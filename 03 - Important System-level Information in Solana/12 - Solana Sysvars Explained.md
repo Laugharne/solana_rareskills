@@ -271,7 +271,7 @@ We are not importing the **StakeHistory** sysvar because we can access it throug
 
 And update the test:
 
-```javascript
+```typescript
 // NOT GOOD !
 ```
 
@@ -350,7 +350,7 @@ In contrast to the previous sysvar, where we used `<sysvar_name>::from_account_i
 
 Update the test:
 
-```javascript
+```typescript
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Sysvars } from "../target/types/sysvars";

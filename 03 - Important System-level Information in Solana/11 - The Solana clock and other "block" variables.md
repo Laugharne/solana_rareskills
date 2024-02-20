@@ -109,7 +109,7 @@ We pass the current **unix timestamp** we get from the **Clock sysvar** as an ar
 
 And update our test:
 
-```javascript
+```typescript
 it("Get day of the week", async () => {
     const tx = await program.methods.getDayOfTheWeek().rpc();
     console.log("Your transaction signature", tx);
@@ -192,7 +192,7 @@ pub struct Initialize<'info> {
 
 The test file:
 
-```javascript
+```typescript
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Sysvar } from "../target/types/sysvar";

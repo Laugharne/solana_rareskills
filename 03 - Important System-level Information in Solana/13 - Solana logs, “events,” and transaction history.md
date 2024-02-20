@@ -6,11 +6,24 @@
 
 Solana programs can emit events similar to how [**Ethereum emits events**](https://www.rareskills.io/post/ethereum-events), though there are some differences we will discuss.
 
-Specifically, events in Solana are intended to pass information to the frontend rather than document past transactions. To get past history, Solana transactions can be queried by address.
+Specifically, events in Solana are intended to pass information to the frontend rather than document past transactions.
 
+To get past history, Solana transactions can be queried by address.
 
 
 ## Solana Logs and Events
+
+
+```bash
+anchor init emit
+cd emit
+anchor build
+cargo update -p solana-program@1.18.2 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+```
 
 The program below has two events: `MyEvent` and `MySecondEvent`. Similar to how Ethereum events have **“arguments”**, Solana events have fields in the struct:
 
@@ -45,21 +58,23 @@ pub struct MySecondEvent {
 }
 ```
 
+Now, run the test on a local Solana node and check the log:
+- `anchor test --skip-local-validator`
+- `solana-test-validator` (in another terminal)
+- `solana logs` (in another terminal)
 
-
-Events become part of the [**Solana program’s IDL**](https://www.rareskills.io/post/anchor-idl), similar to how events are part of a Solidity smart contract’s ABI. Below we screenshot the IDL of the program above while highlighting the relevant part:
+Events become part of the [**Solana program’s IDL**](https://www.rareskills.io/post/anchor-idl), similar to how events are part of a Solidity smart contract’s **ABI**. Below we screenshot the IDL of the program above while highlighting the relevant part:
 
 ![](assets/2024-02-20-11-36-44.png)
-
-There is no such thing as “indexed” or “non-indexed” information in Solana like there is in Ethereum (even though there is an “index” field in the screenshot above, it has no use).
 
 Unlike Ethereum:
 - We cannot directly query for past events over a range of block numbers.
 - We can only listen for events as they occur (*We will see later Solana’s method to audit past transactions*).
+- There is **no** such thing as **“indexed”** or **“non-indexed”** information in Solana like there is in Ethereum (*even though there is an “index” field in the screenshot above, it has no use*).
 
-The code below shows how to listen for events in Solana:
+**The code below shows how to listen for events in Solana:**
 
-```javascript
+```typescript
 import * as anchor from "@coral-xyz/anchor";
 import { BorshCoder, EventParser, Program } from "@coral-xyz/anchor";
 import { Emit } from "../target/types/emit";
@@ -115,24 +130,28 @@ The **“struct”** structure we are using to create an event is an abstraction
 ## Solana logs are not for historical querying
 
 - **In Ethereum**, logs are used for auditing purposes.
-- But **in Solana**, logs cannot be used in that manner since they can only be queried as they occur.
+- But **in Solana**, logs cannot be used in that manner since they can **only be queried as they occur**.
 - Thefore, they are better suited for passing information to the frontend application.
 - Solana functions cannot return data to the frontend the way that Solidity view functions can, so Solana logs are a lightweight way to accomplish this.
 
-Events are preserved in the block explorer however. See the bottom of this transaction as an example:
+> **Events are preserved in the block explorer however.**
 
-[**Transaction | JgyHQPxL3cPLFtV4cx5i842ZgBx57R2fkNn2TZn1wsQZqVXKfijd43CEHo88C3ridK27Kw8KkMzfvDdqaS398SX | Solana**](https://explorer.solana.com/tx/JgyHQPxL3cPLFtV4cx5i842ZgBx57R2fkNn2TZn1wsQZqVXKfijd43CEHo88C3ridK27Kw8KkMzfvDdqaS398SX)
+See the bottom of this transaction as an example:
+
+[**Transaction | Jgy ... 8SX | Solana**](https://explorer.solana.com/tx/JgyHQPxL3cPLFtV4cx5i842ZgBx57R2fkNn2TZn1wsQZqVXKfijd43CEHo88C3ridK27Kw8KkMzfvDdqaS398SX)
 
 
 ## Unlike Ethereum, Solana transactions can be queried by address
 
-In Ethereum, there is no direct way to query the transactions either sent to a smart contract or from a particular wallet.
+**In Ethereum**, there is no direct way to query the transactions either sent to a smart contract or from a particular wallet.
 
 - We can count the number of transactions sent from an address using [**eth_getTransactionCount**](https://ethereum.org/developers/docs/apis/json-rpc#eth_gettransactioncount).
 - We can get a specific transaction using the transaction hash with [**eth_getTransactionByHash**](https://ethereum.org/developers/docs/apis/json-rpc#eth_gettransactionbyhash).
 - We can get the transactions in a specific block using [**eth_getBlockByNumber**](https://ethereum.org/developers/docs/apis/json-rpc#eth_getblockbynumber) or [**eth_getBlockByHash**](https://ethereum.org/developers/docs/apis/json-rpc#eth_getblockbyhash).
 
-However, there it is not possible to get all transactions by address. This has to be done indirectly by parsing every block since the wallet became active or the smart contract was deployed.
+However, there it is not possible to get all transactions by address.
+
+This has to be done indirectly by parsing every block since the wallet became active or the smart contract was deployed.
 
 To audit the transactions in a smart contract, developers add smart contract events to query transactions of interest.
 
