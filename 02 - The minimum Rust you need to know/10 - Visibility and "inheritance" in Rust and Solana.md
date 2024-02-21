@@ -26,7 +26,7 @@ pub fn my_public_function(ctx: Context<Initialize>) -> Result<()> {
 }
 ```
 
-Adding pub keyword prior to function declaration makes the function public.
+Adding **`pub` keyword** prior to function declaration makes the function public.
 
 You cannot remove the `pub` keyword for functions inside of the module (`mod`) labeled `#[program]`. It will not compile.
 
