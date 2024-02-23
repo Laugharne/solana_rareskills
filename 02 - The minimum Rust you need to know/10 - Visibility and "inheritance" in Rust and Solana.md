@@ -161,9 +161,9 @@ pub mod func_visibility {
 pub struct Initialize {}
 ```
 
-The `pub` (in `crate::func_visibility`) keyword indicates that `private_function` function is only visible within `func_visibility` module.
+The `pub` (in `crate::func_visibility`) **keyword** indicates that `private_function()` **function** is only visible within `func_visibility` **module**.
 
-We were able to call `private_function` successfully in the `initialize` function because the `initialize` function is **within `func_visibility` module**.
+We were able to call `private_function()` successfully in the `initialize()` **function** because the `initialize()` function is **within `func_visibility` module**.
 
 Let's try to call `private_function` from outside the module:
 
