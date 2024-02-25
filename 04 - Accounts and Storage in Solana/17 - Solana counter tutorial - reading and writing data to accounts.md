@@ -6,6 +6,17 @@
 
 In our previous tutorial, we discussed how to initialize an account so that we could persist data in storage. This tutorial shows how to write to an account we have already initialized.
 
+```bash
+anchor init read_write_storage
+cd read_write_storage
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+```
+
 Below is the code from the previous tutorial on initializing Solana accounts. We have added a **`set()` function** to store a number in `MyStorage` and the associated **`Set` struct**.
 
 The rest of the code is unchanged:
@@ -97,9 +108,9 @@ Recall, a **Solana transaction must specify in advance which accounts it will ac
 
 The `seeds = []` and `bump` are used to derive the address of the account we will be modifying. Although the user is passing in the account for us, Anchor validates that the user is passing an account this program really owns by re-deriving the address and comparing it to what the user provided.
 
-The **term `bump`** can be treated as boilerplate for now. But for the curious, it is used to ensure that the account is not a cryptographically valid public key. This is how the runtime knows this will be used as data storage for programs.
+**The term `bump`** can be treated as boilerplate for now. But for the curious, it is used to ensure that the account is not a cryptographically valid public key. This is how the runtime knows this will be used as data storage for programs.
 
-Even though our Solana program could derive the address of the storage account on its own, the user still needs to provide the **account `myStorage`** anyway. This is required by the Solana runtime for reasons we will discuss in an upcoming tutorial.
+Even though our Solana program could derive the address of the storage account on its own, the user still needs to provide the **account `MyStorage`** anyway. This is required by the Solana runtime for reasons we will discuss in an upcoming tutorial.
 
 
 ## An alternative way to write the set function
@@ -126,6 +137,10 @@ pub fn set(ctx: Context<Set>, new_x: u64) -> Result<()> {
 **Exercise**: Rerun the tests with the new set function.
 > Don’t forget to **reset** the validator if you are using a **local testnet**.
 
+- `anchor test --skip-local-validator`
+- `solana-test-validator --reset` (in another terminal)
+- `solana logs` (in another terminal)
+
 
 ## Viewing our storage account
 
@@ -145,8 +160,26 @@ The output is as follows:
 - The **first 8 bytes** (**green** box) are the **discriminator**.
 - Our test stored the number **170** in the struct, this has a **hex** representation of **aa** which is shown in the **red** box.
 
+```bash
+solana account 4ob5tvgYWr9MeTtHZS3yCfyQyxNXJ96Gmkx9JWAEUMEy
+```
+```
+Public Key: 4ob5tvgYWr9MeTtHZS3yCfyQyxNXJ96Gmkx9JWAEUMEy
+Balance: 0.00100224 SOL
+Owner: 6AHTMuew9aNk4RWEaYNJ18mBEeVrrDaiwwpcGgLqui3o
+Executable: false
+Rent Epoch: 18446744073709551615
+Length: 16 (0x10) bytes
+0000:   1c f2 3b 85  43 19 31 28  00 00 00 00  00 00 00 00   ..;.C.1(........
+```
 Of course, the command line is not the mechanism we want to use to view account data on the frontend, or if we want our program to view another program’s account. This will be discussed in the following tutorial.
 
+```
+Length: 16 (0x10) bytes
+0000:   1c f2 3b 85  43 19 31 28  09 03 00 00  00 00 00 00   ..;.C.1(........
+```
+
+**777 (decimal)** **0X0309 (hex)** **09 03 00 00**
 
 
 ## Viewing our storage account from within the Rust Program
