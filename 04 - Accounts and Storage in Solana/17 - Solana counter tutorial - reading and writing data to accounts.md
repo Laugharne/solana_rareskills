@@ -179,7 +179,7 @@ Length: 16 (0x10) bytes
 0000:   1c f2 3b 85  43 19 31 28  09 03 00 00  00 00 00 00   ..;.C.1(........
 ```
 
-**777 (decimal)** **0X0309 (hex)** **09 03 00 00**
+**777 (decimal)** ➔ **0X0309 (hex)** ➔ **09 03 00 00**
 
 
 ## Viewing our storage account from within the Rust Program
