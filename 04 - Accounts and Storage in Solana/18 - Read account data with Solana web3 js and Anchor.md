@@ -106,9 +106,31 @@ Anchor is automatically calculating the address of the **`MyStorage` account**, 
 
 To understand how Anchor is magically converting the **Rust struct into a Typescript struct**, let’s take a look at the **IDL** in `target/idl/basic_storage.json`. Towards the bottom of the JSON, we can see a definition of the struct our program is creating:
 
-![](assets/2024-02-26-09-23-30.png)
+**Extrait** :
+```json
+"accounts": [
+  {
+    "name": "MyStorage",
+    "type": {
+      "kind": "struct",
+      "fields": [
+        {
+          "name": "x",
+          "type": "u64"
+        }
+      ]
+    }
+  }
+]
+```
+```rust
+#[account]
+pub struct MyStorage {
+    x: u64,
+}
+```
 
-This method only works for accounts your program or client initialized or created and have the IDL for, it will not work for an arbitrary account.
+> This method only works for accounts your program or client initialized or created and have the IDL for, it **will not work for an arbitrary account**.
 
 That is, if you pick a random account on Solana and use the code above, the deserialization will almost certainly fail. Later in this article we will read the account in a more “raw” manner.
 
@@ -120,6 +142,18 @@ The **function `fetch()`** is not magical. So how do we do this for an account w
 If we know the IDL of another program that was created with Anchor, we can conveniently read its account data.
 
 Let’s `anchor init` another program in another shell, then have it initialize an account, and then set a single boolean variable in that struct to `true`. We’ll call this other **account `other_program`** and the **struct** that stores its boolean as `TrueOrFalse`:
+
+```bash
+anchor init day_18_other_program
+cd day_18_other_program
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+```
+
 
 ```rust
 use anchor_lang::prelude::*;
@@ -188,12 +222,33 @@ describe("other_program", () => {
 });
 ```
 
+- `anchor test --skip-local-validator`
+- `solana-test-validator --reset` (in another terminal)
+- `solana logs` (in another terminal)
+
 Run the tests in another shell against a local validator. Take note of the `programId` that gets printed out. We will need it to derive the address of `other_program`’s **account**.
+
+```
+  day_18_other_program
+address:  8H6Ag2w2ipTuNyUi4dvKk3zPd4MYg3HCiUiBgmaC5NA2
+    ✔ Is initialized! (705ms)
+```
 
 
 ### read program
 
 In another shell, `anchor init` another program. We’ll call it `read`. We are only going to use the Typescript code to read the **`TrueOrFalse` struct** of `other_program`, no Rust is used. This simulates reading from another program’s storage account.
+
+```bash
+anchor init day_18_read
+cd day_18_read
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+```
 
 The layout of our directory is as follows:
 
@@ -206,7 +261,7 @@ parent_dir/
 The following code will read the **`TrueOrFalse` struct** from `other_program`. Ensure that :
 - The `otherProgramAddress` matches the one from printed above.
 - Ensure that you are reading the **`other_program.json` IDL** from the right file location.
-- Make sure to **run the tests** with `--skip-local-validator` to ensure that this code reads the account the other program created.
+- Make sure to **run the tests** with `anchor test --skip-local-validator` to ensure that this code reads the account the other program created.
 
 ```typescript
 import * as anchor from "@coral-xyz/anchor";
@@ -240,6 +295,16 @@ The expected output is as follows:
 
 ![](assets/2024-02-26-09-33-26.png)
 
+
+```bash
+  day_18_read
+The value of flag is: true
+    ✔ Read other account (52ms)
+
+
+  1 passing (55ms)
+```
+
 Again, this only works if the other Solana program was built with Anchor. This is relying on how Anchor serializes structs.
 
 
@@ -249,13 +314,18 @@ In the following section we show how to read data without the Anchor magic.
 
 Unfortunately, the documentation for Solana’s Typescript client is very limited and the library has been updated enough times to deprecate tutorials on the subject.
 
-Your best bet for trying to find the Solana web3 Typescript function you need is to look at the [**HTTP JSON RPC Methods**](https://docs.solana.com/api/http) and look for one that seems promising. In our case, `getAccountInfo` looks promising (**blue arrow**).
+Your best bet for trying to find the Solana web3 Typescript function you need is to look at the [**HTTP JSON RPC Methods**](https://docs.solana.com/api/http) and look for one that seems promising. In our case, [**`getAccountInfo`**](https://solana.com/docs/rpc/http/getaccountinfo) looks promising (**blue arrow**).
 
 ![](assets/2024-02-26-09-34-19.png)
 
 Next we want to try to find that method in Solana web3 js. Preferably, you should use an IDE with autocompletion so you can fiddle around until you find that function as the following video demonstrates:
 
 [**VIDEO**](https://video.wixstatic.com/video/935a00_06ca67880d9f4b1b8415cd580faf0ea6/480p/mp4/file.mp4)
+
+```javascript
+let myStorageInfo = await anchor.getProvider().connection.getAccountInfo(myStorage);
+console.log(myStorageInfo);
+```
 
 Below we show the expected output of running the test again:
 
