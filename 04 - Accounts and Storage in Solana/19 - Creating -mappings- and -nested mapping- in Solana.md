@@ -25,6 +25,18 @@ contract ExampleMapping {
 
 We now create a Solana Anchor program `example_map`.
 
+```bash
+anchor init day_19_example_map
+cd day_19_example_map
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.9 --precise 0.8.6
+anchor build
+ls -la
+```
+14+26+41 = 81
+1 minute, 21 secondes
 
 ## Initializing a mapping: Rust
 
@@ -52,7 +64,7 @@ pub struct Initialize<'info> {
     #[account(init,
               payer = signer,
               space = size_of::<Val>() + 8,
-              seeds   =[&key.to_le_bytes().as_ref()],
+              seeds =[&key.to_le_bytes().as_ref()],
               bump)]
     val: Account<'info, Val>,
     
@@ -70,8 +82,6 @@ pub struct Val {
 
 Here’s how you can think of the map:
 
-
-
 The **seeds parameter `key`** in `key.to_le_bytes().as_ref()` can be thought of as a “key” to the map similar to the Solidity construction:
 
 ```solidity
@@ -79,7 +89,9 @@ mapping(uint256 =uint256) myMap;
 myMap[key] = val
 ```
 
-The unfamiliar parts of the code are `#[instruction(key: u64)]` and `seeds = key.to_le_bytes().as_ref()`.
+The unfamiliar parts of the code are:
+- `#[instruction(key: u64)]`.
+- `seeds = key.to_le_bytes().as_ref()`.
 
 ### seeds = [&key.to_le_bytes().as_ref()]
 
@@ -87,7 +99,7 @@ The items in `seeds` are expected to be bytes. However, we are passing in a `u64
 
 ### #[instruction(key: u64)]
 
-In order to “pass” the **function argument `key`** in `initialize(ctx: Context<Initialize>), key: u64)` we need to use the **`instruction` macro**, otherwise our **`init` macro** has no way to “see” the **`key` argument** from **`initialize()`**.
+In order to “pass” the **function argument `key`** in `initialize(ctx: Context<Initialize>), key: u64)` we need to use the **`instruction` macro**, otherwise our **init macro** has no way to “see” the **`key` argument** from **`initialize()`**.
 
 
 ## Initializing a mapping: Typescript
@@ -127,6 +139,9 @@ We chose **`8` bytes** because :
 
 Each "value" in the mapping is a separate account and must be initialized separately.
 
+- `anchor test --skip-local-validator`
+- `solana-test-validator --reset` (in another terminal)
+- `solana logs` (in another terminal)
 
 ## Set a mapping: Rust
 
@@ -191,11 +206,9 @@ describe("example_map", () => {
 
 ## Clarifying “nested mappings”
 
-In languages like Python or Javascript, a true nested mapping is a hashmap that points to another hash map.
-
-In Solidity however, “nested mappings” are only a single map with multiple keys behaving as if they are one key.
-
-In a “true” nested mapping, you can provide only the first key and get another hashmap returned to you.
+- In languages like Python or Javascript, a true nested mapping is a hashmap that points to another hash map.
+- In Solidity however, “nested mappings” are only a single map with multiple keys behaving as if they are one key.
+- In a “true” nested mapping, you can provide only the first key and get another hashmap returned to you.
 
 > Solidity “nested mappings” are not “true” nested mappings: you cannot supply one key and get a map back: you must provide all the keys and get the final result.
 
@@ -328,4 +341,8 @@ pub struct InitializeMap<'info> {
 }
 ```
 
-Exercise: Complete the Rust and Typescript code to create a program that has two mappings: the first one with a single key and second one with two keys. Think about how to turn a two level map into a single level map when the first map is specified.
+**Exercise**: Complete the Rust and Typescript code to create a program that has **two mappings** :
+- The **first** one with a **single key**.
+- And **second** one with **two keys**.
+
+Think about how to turn a two level map into a single level map when the first map is specified.
