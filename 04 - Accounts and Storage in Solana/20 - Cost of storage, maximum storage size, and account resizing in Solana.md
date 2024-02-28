@@ -20,9 +20,19 @@ If you want a quick estimate, running `solana rent <number of bytes>` in the com
 
 ![](assets/2024-02-28-08-12-17.png)
 
+```bash
+❯ solana rent 32
+Rent-exempt minimum: 0.0011136 SOL
+```
+
 As mentioned earlier, allocating zero bytes is not free:
 
 ![](assets/2024-02-28-08-12-31.png)
+
+```bash
+❯ solana rent 0
+Rent-exempt minimum: 0.00089088 SOL
+```
 
 Let’s see how this fee is calculated.
 
@@ -33,6 +43,19 @@ The [**Anchor Rent Module**](https://docs.rs/solana-program/latest/solana_progra
 - `DEFAULT_LAMPORTS_PER_BYTE_YEAR`: this constant has a **value of 3,480** meaning **each byte requires 3,480 lamports per year**. Since we are required to pay **two years** worth, each byte will cost us **6,960 lamports**.
 
 The following rust program prints out how much an empty account will cost us. Note that the result matches the screenshot of the `solana rent 0` above:
+
+```bash
+anchor init day_20_rent
+cd day_20_rent
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.10 --precise 0.8.6
+anchor build
+ls -la
+```
+
+
 
 ```rust
 use anchor_lang::prelude::*;
@@ -59,6 +82,9 @@ pub mod rent {
 #[derive(Accounts)]
 pub struct Initialize {}
 ```
+- `anchor test --skip-local-validator`
+- `solana-test-validator` (in another terminal)
+- `solana logs` (in another terminal)
 
 If we want to compute how much a non-empty account will cost, then we simply add the number of bytes to the cost of an empty account as follows:
 
@@ -134,6 +160,20 @@ When we initialize an account, we cannot initialize more than **10,240 bytes** i
 **Exercise**: create a basic storage initialization program and `set space=10241`. This is 1 byte higher than the limit. You should see an error like the following:
 
 ![](assets/2024-02-28-08-24-25.png)
+
+```bash
+anchor init day_20_basic_storage
+cd day_20_basic_storage
+anchor build
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchor build
+cargo update -p ahash@0.8.10 --precise 0.8.6
+anchor build
+ls -la
+```
+- `anchor test --skip-local-validator`
+- `solana-test-validator --reset` (in another terminal)
+- `solana logs` (in another terminal)
 
 
 ## Changing the size of an account
