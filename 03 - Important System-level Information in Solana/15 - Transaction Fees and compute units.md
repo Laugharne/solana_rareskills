@@ -2,7 +2,7 @@
 
 # Introduction to Solana Compute Units and Transaction Fees
 
-![](2024-02-23-10-03-57.png)
+![](assets/2024-02-23-10-03-57.png)
 
 **In Ethereum :**
 - The price of a transaction is computed as **gasUsed × gasPrice**. This tells us how much Ether will be spent to include the transaction on the blockchain.
