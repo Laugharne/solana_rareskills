@@ -3,6 +3,7 @@ playground/sol_node/
 **/target/
 **/node_modules/
 
+log_*
 
 .anchor
 .DS_Store

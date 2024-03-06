@@ -120,7 +120,7 @@ It is not required that the **key `signer`** be called **signer**.
 
 **Exercise**:In the Rust code, change `signer = signer` to `signer = fren` and `pub signer: Signer<'info>`, to `pub fren: Signer<'info>`, and change `signer: newKeypair.publicKey` to `fren: newKeypair.publicKey` in the test. The initialization should succeed and the test should pass.
 
-- `anchor test --skip-local-validator`
+- `anchor test --skip-local-validator  `
 - `solana-test-validator --reset` (in another terminal)
 - `solana logs` (in another terminal)
 
