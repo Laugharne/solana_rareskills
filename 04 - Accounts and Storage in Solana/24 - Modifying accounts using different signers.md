@@ -9,10 +9,24 @@ In our [Solana tutorials](https://www.rareskills.io/solana-tutorial) thus far, w
 
 In practice, this is very restrictive. For example, if user Alice is transferring points to Bob, Alice must be able to write to an account initialized by user Bob.
 
-In this tutorial we will demonstrate initializing an account with one wallet and updating it with another.
+```mermaid
+flowchart LR;
+  Alice-- points -->Bob;
+```
+
+> In this tutorial we will demonstrate initializing an account with one wallet and updating it with another.
 
 
 ## The initialization step
+
+```bash
+anchi day_24_other_write
+cargo update -p solana-program@1.18.3 --precise 1.17.4
+anchb
+cargo update -p ahash@0.8.11 --precise 0.8.6
+anchor build
+ls -la
+```
 
 The Rust code we’ve been using to initialize accounts doesn’t change:
 
@@ -55,12 +69,12 @@ pub struct MyStorage {
 ### Doing the initialization transaction with an alternate wallet
 
 However, there is an important change in the client code:
-- For testing purposes, we create a new wallet called newKeypair. This is different from the one Anchor provides by default.
-- We airdrop that new wallet 1 SOL so it can pay for transactions.
-- Pay attention to the comment // THIS MUST BE EXPLICITLY SPECIFIED. We are passing the publicKey of that wallet for the Singer field. When we use the default signer built into Anchor, Anchor passes this in the background for us. However, when we use a different wallet, we need to provide this explictily.
-- We set the signer to be newKeypair with the .signers([newKeypair]) configuration.
+- For testing purposes, we create a **new wallet** called `newKeypair`. This is different from the one Anchor provides by default.
+- We airdrop that new wallet **1 SOL** so it can pay for transactions.
+- Pay attention to the **comment `// THIS MUST BE EXPLICITLY SPECIFIED`**. We are passing the `publicKey` of that wallet for the **`Singer` field**. When we use the default signer built into Anchor, Anchor passes this in the background for us. However, when we use a different wallet, we need to provide this explictily.
+- We set the signer to be `newKeypair` with the **`.signers([newKeypair])` configuration**.
 
-We will explain after this code snippet why we are (seemingly) specifying the signer twice:
+We will explain after this code snippet why we are (*seemingly*) specifying the signer twice:
 
 ```typescript
 import * as anchor from "@coral-xyz/anchor";
@@ -106,6 +120,11 @@ It is not required that the **key `signer`** be called **signer**.
 
 **Exercise**:In the Rust code, change `signer = signer` to `signer = fren` and `pub signer: Signer<'info>`, to `pub fren: Signer<'info>`, and change `signer: newKeypair.publicKey` to `fren: newKeypair.publicKey` in the test. The initialization should succeed and the test should pass.
 
+- `anchor test --skip-local-validator`
+- `solana-test-validator --reset` (in another terminal)
+- `solana logs` (in another terminal)
+
+
 
 ## Why does Anchor require specifying the Signer and the publicKey?
 
@@ -132,6 +151,17 @@ We will get the following error:
 
 ![](assets/2024-03-05-11-14-24.png)
 
+```bash
+  1) day_24_other_write
+       Is initialized!:
+     Error: Signature verification failed.
+Missing signature for public key [`9ZnwjhNx6bmqqHen1zoTJFUApFEJjTfmBusjoAtcDNjZ`].
+      at Transaction.serialize (node_modules/@solana/web3.js/src/transaction/legacy.ts:827:15)
+      at AnchorProvider.sendAndConfirm (node_modules/@coral-xyz/anchor/src/provider.ts:157:22)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at MethodsBuilder.rpc [as _rpcFn] (node_modules/@coral-xyz/anchor/src/program/namespace/rpc.ts:29:16)
+```
+
 Similarly, if we don’t pass in the `publicKey` explicitly, Anchor will silently use the default signer:
 
 ![](assets/2024-03-05-11-14-50.png)
@@ -139,6 +169,16 @@ Similarly, if we don’t pass in the `publicKey` explicitly, Anchor will silentl
 And we will get the following **Error: unknown signer:**
 
 ![](assets/2024-03-05-11-15-43.png)
+
+```bash
+  1) day_24_other_write
+       Is initialized!:
+     Error: unknown signer: 8fn4p27g6fH4wNKs9GMgsgrxVJSSk7SogL4G4RAEz7VZ
+      at Transaction._addSignature (node_modules/@solana/web3.js/src/transaction/legacy.ts:753:13)
+      at forEach (node_modules/@solana/web3.js/src/transaction/legacy.ts:726:12)
+      at Array.forEach (<anonymous>)
+      at Transaction._partialSign (node_modules/@solana/web3.js/src/transaction/legacy.ts:724:13)
+```
 
 Somewhat misleadingly, Anchor isn’t saying the signer is unknown because it wasn’t specified per se. Anchor is able to figure out that if no signer is specified, then it will use the default signer. If we remove both the `.signers([newKeypair])` code *and* the `fren: newKeypair.publicKey` code, then Anchor will use the default signer for both the public key to check against, and the signature of the signer to verify it matches the public key.
 
@@ -148,6 +188,10 @@ The following code will result in a successful initialization because both the S
 
 ![](assets/2024-03-05-11-17-00.png)
 
+```bash
+  day_24_other_write
+    ✔ Is initialized! (833ms)
+```
 
 ## Bob can write to an account Alice initialized
 
@@ -206,7 +250,15 @@ pub struct MyStorage {
 }
 ```
 
-The following client code will create a wallet for Alice and Bob and airdrop them 1 SOL each. Alice will initialize the **account `MyStorage`**, and Bob will write to it:
+The following client code will create a wallet for Alice and Bob and airdrop them 1 SOL each.
+- **Alice** will initialize the **account `MyStorage`**.
+- And **Bob** will write to it.
+
+```mermaid
+flowchart LR;
+  airdrop>Airdrop]-- 1 SOL -->Alice==create==>storage[(MyStorage)];
+  airdrop>Airdrop]-- 1 SOL -->Bob-.-w3(write `3`)-.->storage;
+```
 
 ```typescript
 import * as anchor from "@coral-xyz/anchor";
@@ -230,12 +282,16 @@ describe("other_write", () => {
 
   it("Is initialized!", async () => {
     const alice = anchor.web3.Keypair.generate();
-    const bob = anchor.web3.Keypair.generate();
+    const bob   = anchor.web3.Keypair.generate();
 
-    const airdrop_alice_tx = await anchor.getProvider().connection.requestAirdrop(alice.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL);
+    const airdrop_alice_tx = await anchor.getProvider().connection.requestAirdrop(
+      alice.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL
+    );
     await confirmTransaction(airdrop_alice_tx);
 
-    const airdrop_alice_bob = await anchor.getProvider().connection.requestAirdrop(bob.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL);
+    const airdrop_alice_bob = await anchor.getProvider().connection.requestAirdrop(
+      bob.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL
+    );
     await confirmTransaction(airdrop_alice_bob);
 
     let seeds = [];
@@ -259,17 +315,33 @@ describe("other_write", () => {
 });
 ```
 
+```bash
+  day_24_other_write
+value stored is 3
+    ✔ Is initialized! (1494ms)
+```
+
+
 
 ## Restricting writes to Solana accounts
 
 In real applications, we don’t want Bob writing arbitrary data to arbitrary accounts. Let’s create a basic example where users can initialize an account with 10 points and transfer those points to another account. (*There is an obvious problem that a hacker can create as many accounts as they want using separate wallets, but that is outside of the scope of our example*).
 
+```bash
+anchi day_24_points
+cargo update -p solana-program@1.18.4 --precise 1.17.4
+anchb
+cargo update -p ahash@0.8.11 --precise 0.8.6
+anchorb
+ls -la
+```
+
 
 ## Building a proto-ERC20 program
 
-Alice should be able to modify both her account and Bob’s account. That is, she should be able to deduct her points and credit Bob’s points. She should not be able to deduct Bob’s points — only Bob should be able to do that.
+Alice should be able to modify both her account and Bob’s account. That is, she should be able to deduct her points and credit Bob’s points. **She should not be able to deduct Bob’s points — only Bob should be able to do that**.
 
-By convention, we call an address that can make priviledged changes to an account an “authority” in Solana. It is a common pattern to store the “authority” field in the account struct to signify that only that account can conduct sensitive operations on that account (*such as deducting points in our example*).
+By convention, we call an address that can make priviledged changes to an account an *“authority”* in Solana. It is a common pattern to store the **`authority` field** in the account struct to signify that only that account can conduct sensitive operations on that account (*such as deducting points in our example*).
 
 This is somewhat analogous to the [**onlyOwner pattern in Solidity**](https://www.rareskills.io/post/openzeppelin-ownable2step), except that instead of applying to the entire contract, it applies only to a single account:
 
@@ -350,7 +422,9 @@ The **`transfer_points()` function** uses [**Solana Anchor require macros and er
 1. the Signer of the transaction is the authority of the account whose balance is getting deducted;
 2.  and the account has enough points balance to transfer.
 
-The test codebase should be straightforward to understand. Alice and Bob initialize their accounts, then Alice transfer 5 points to Bob:
+The test codebase should be straightforward to understand:
+1. Alice and Bob initialize their accounts.
+2. Then Alice transfer 5 points to Bob:
 
 ```typescript
 import * as anchor from "@coral-xyz/anchor";
@@ -373,7 +447,7 @@ describe("points", () => {
 
   it("Alice transfers points to Bob", async () => {
     const alice = anchor.web3.Keypair.generate();
-    const bob = anchor.web3.Keypair.generate();
+    const bob   = anchor.web3.Keypair.generate();
 
     const airdrop_alice_tx = await anchor.getProvider().connection.requestAirdrop(alice.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL);
     await confirmTransaction(airdrop_alice_tx);
@@ -412,17 +486,69 @@ describe("points", () => {
 });
 ```
 
+```bash
+  day_24_points
+Alice has 5 points
+Bob   has 15 points
+    ✔ Alice transfers points to Bob (1770ms)
+```
+
 **Exercise**: Create a **keypair `mallory`** and try to get `mallory` to steal points from Alice or Bob by using `mallory` as the signer in `.signers([mallory])`. Your attack should fail, but you should try anyway.
 
+```bash
+  1 failing
+
+  1) day_24_points
+       Alice transfers points to Bob:
+     Error: unknown signer: 8jYNuSyTsDzwdum8aTpPHdTj5rzHkavnDJX9NRQjjTp5
+```
 
 ## Using Anchor Constraints to replace `require!` macros
 
-An alternative to writing `require!(ctx.accounts.from.authority == ctx.accounts.signer.key(), Errors::SignerIsNotAuthority);` is to use an Anchor constraint. The [**Anchor account docs**](https://docs.rs/anchor-lang/latest/anchor_lang/derive.Accounts.html) give us a list of constraints available to us.
+An alternative to writing `require!(ctx.accounts.from.authority == ctx.accounts.signer.key(), Errors::SignerIsNotAuthority);` is to use an **Anchor constraint**. The [**Anchor account docs**](https://docs.rs/anchor-lang/latest/anchor_lang/derive.Accounts.html#constraints) give us a list of constraints available to us.
+
+*see :*
+```rust
+require!(ctx.accounts.from.authority == ctx.accounts.signer.key(),
+		 Errors::SignerIsNotAuthority);
+require!(ctx.accounts.from.points >= amount,
+		 Errors::InsufficientPoints);
+```
+
+In the context of the Anchor framework for Solana, **"account constraints"** refer to the limitations or restrictions imposed on Solana accounts that are managed by smart contracts developed using Anchor. These constraints define the rules and conditions under which the accounts associated with the smart contracts can be accessed, modified, or interacted with.
+
+Some of the account constraints that may apply when using the Anchor framework include:
+
+1. **Owner Authorization**: Accounts may require authorization from a specific owner or set of owners in order to execute certain operations or transactions.
+2. **Program Authorization**: Smart contracts developed using Anchor may impose constraints on the authorization required for interacting with associated accounts, ensuring that only specific programs can access or modify the accounts.
+3. **Token Minting and Burning**: For accounts representing tokens, there may be constraints on minting (*creating*) or burning (*destroying*) tokens, ensuring that these operations are performed securely and in accordance with predefined rules.
+4. **Data Size Limits**: Constraints may be imposed on the maximum size of data that can be stored within accounts, helping to optimize storage and prevent abuse of resources.
+5. **Program Upgrades**: Accounts associated with smart contracts may have constraints related to program upgrades, ensuring that upgrades are performed safely and in a controlled manner without compromising the integrity of the contract.
+
+These account constraints help to ensure the security, integrity, and proper functioning of smart contracts deployed using the Anchor framework on the Solana blockchain.
+
 
 
 ## Anchor `has_one` constraint
 
-The **`has_one` constraint** assumes that there is “shared key” between `#[derive(Accounts)]` and `#[account]` and checks that both of those keys have the same value. The best way to demonstrate this is with a picture:
+The [**`has_one` constraint**](https://docs.rs/anchor-lang/latest/anchor_lang/derive.Accounts.html#normal-constraints) assumes that there is “shared key” between `#[derive(Accounts)]` and `#[account]` and checks that both of those keys have the same value.
+
+--------
+
+Checks the `target_account` field on the account matches the key of the `target_account` field in the Accounts struct.
+Custom errors are supported via `@`.
+  
+Example:
+```rust
+    #[account(mut, has_one = authority)]
+    pub data: Account<'info, MyData>,
+    pub authority: Signer<'info>
+```
+In this example `has_one` checks that `data.authority = authority.key()`
+
+--------
+
+The best way to demonstrate this is with a picture:
 
 ![](assets/2024-03-05-11-32-47.png)
 
