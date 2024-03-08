@@ -24,7 +24,11 @@ Not all sysvars support the `get` method, and some are deprecated (*information 
 - **Instructions**: To get access to the serialized instructions that are part of the current transaction.
 - **LastRestartSlot**: Contains the slot number of the last restart (*the last time Solana restarted*) or zero if none ever happened. If the Solana blockchain were to crash and restart, an application can use this information to determine if it should wait until things stabilize.
 
-> **Note :** Le terme **"Lamport"** fait référence à l'algorithme de synchronisation d'horloge utilisé pour maintenir la cohérence de l'horloge entre les nœuds du réseau. Cet algorithme est nommé d'après son inventeur, **Leslie Lamport**, un informaticien et lauréat du prix Turing.
+> **Note :** Avec la blockchain Solana, les "lamports" sont une **unité de mesure de la monnaie native** de Solana, le SOL. Un lamport équivaut à une **fraction** très petite **de SOL**, utilisée pour mesurer les **coûts des transactions**, des contrats intelligents et d'autres opérations sur la blockchain Solana.
+
+> Les lamports sont **similaires aux "gwei" sur Ethereum** ou aux "satoshis" sur Bitcoin, fournissant une granularité plus fine pour les transactions et les calculs sur le réseau Solana.
+
+> Le terme **"Lamport"** fait référence à l'algorithme de synchronisation d'horloge utilisé pour maintenir la cohérence de l'horloge entre les nœuds du réseau. Cet algorithme est nommé d'après son inventeur, **Leslie Lamport**, un informaticien et lauréat du prix Turing.
 
 > L'algorithme de Lamport est essentiel dans le protocole de consensus de Solana pour garantir que tous les nœuds du réseau sont synchronisés et ont une compréhension commune du temps. Créant un ordre temporel pour les transactions et les événements sur la blockchain Solana.
 

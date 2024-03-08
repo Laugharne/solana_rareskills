@@ -77,13 +77,19 @@ describe("init_if_needed", () => {
 
 When we try to build this program with `anchor build`, we will get the following error:
 
-![anchor init_if_needed warning](https://static.wixstatic.com/media/935a00_c444fda7ad5a4771ac4444d8993eb1f7~mv2.png/v1/fill/w_740,h_108,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/935a00_c444fda7ad5a4771ac4444d8993eb1f7~mv2.png)
+![](assets/2024-03-08-14-20-38.png)
 
 To make the error **`init_if_needed` requires that anchor-lang be imported with the init-if-needed cargo feature enabled** go away, we can open the **"*Cargo.toml*" file** in "*programs/<anchor_project_name>*" and add the following line:
 
 ```toml
 [dependencies]
 anchor-lang = { version = "0.29.0", features = ["init-if-needed"] }
+```
+
+```bash
+  day_27_init_if_needed
+counter is 3
+    ✔ Is initialized! (1073ms)
 ```
 
 But before we just silence the error, we should understand what a re-initialization attack is and how it can occur.
@@ -96,11 +102,13 @@ If we try to initialize an account that has already been initialized, the transa
 
 ## How does Anchor know an account is already initialized?
 
-From Anchor’s perspective, if the account has a non-zero lamport balance OR the account is owned by the system program, then it is not initialized.
+**From Anchor’s perspective, if the account has a non-zero lamport balance OR the account is owned by the system program, then it is not initialized.**
 
-An account owned by the system program or with zero lamport balance can be initialized again.
+**An account owned by the system program or with zero lamport balance can be initialized again.**
 
-To illustrate this, we have a Solana program with the typical **`initialize()` function** (*which uses `init`, not `init_if_needed`*). It also has a **`drain_lamports()` function** and a **`give_to_system_program()` function**, both of which do what their names suggest:
+To illustrate this,
+- We have a Solana program with the typical **`initialize()` function** (*which uses `init`, not `init_if_needed`*).
+- It also has a **`drain_lamports()` function** and a **`give_to_system_program()` function**, both of which do what their names suggest:
 
 ```rust
 use anchor_lang::prelude::*;
@@ -120,14 +128,14 @@ pub mod reinit_attack {
     pub fn drain_lamports(ctx: Context<DrainLamports>) -> Result<()> {
         let lamports = ctx.accounts.my_pda.to_account_info().lamports();
         ctx.accounts.my_pda.sub_lamports(lamports)?;
-                ctx.accounts.signer.add_lamports(lamports)?;
+        ctx.accounts.signer.add_lamports(lamports)?;
         Ok(())
     }
 
     pub fn give_to_system_program(ctx: Context<GiveToSystemProgram>) -> Result<()> {
         let account_info = &mut ctx.accounts.my_pda.to_account_info();
         // the assign method changes the owner
-                account_info.assign(&system_program::ID);
+        account_info.assign(&system_program::ID);
         account_info.realloc(0, false)?;
 
         Ok(())
@@ -193,6 +201,14 @@ describe("Program", () => {
 });
 ```
 
+```bash
+  day_27_reinit_attack
+account initialized after giving to system program!
+account initialized after draining lamports!
+    ✔ initialize after giving to system program or draining lamports (2075ms)
+```
+
+
 The sequence is as follows:
 
 1. We initialize the PDA
@@ -202,7 +218,7 @@ The sequence is as follows:
 5. With zero lamport balance, the Solana runtime considers the account non-existent as it will be scheduled for deletion as it is no longer rent exempt.
 6. We call initialize again, and it succeeds. **We have successfully reinitialized the account after following this sequence**.
 
-Again, Solana does not have an “initialized” flag or anything. Anchor will allow an initialize transaction to succeed if the owner is the system program or the lamport balance is zero.
+Again, **Solana does not have an “initialized” flag** or anything. Anchor will allow an initialize transaction to succeed if the owner is the system program or the lamport balance is zero.
 
 
 ## Why reinitialization might be a problem in our example
@@ -211,9 +227,14 @@ Transferring ownership to the system program requires erasing the data in the ac
 
 Is your intent by doing either of those actions to restart the counter or end the life of the counter? If your application never expects the counter to be reset, this could lead to bugs.
 
-Anchor wants you to think through your intent with this, which is why it makes you jump through the extra hoop of enabling a feature flag in Cargo.toml.
+> In french : "*Votre intention en effectuant l'une ou l'autre de ces actions est-elle de redémarrer le compteur ou de mettre fin à la vie du compteur ? Si votre application n'attend jamais à ce que le compteur soit réinitialisé, cela pourrait entraîner des bugs.*"
 
-If you are okay with the counter getting reset back at some point and counting back up, reinitialization is not an issue. But if the counter should never reset to zero under any circumstance, then it would probably be better for you to implement the **`initialization()` function** separately and add a safeguard to make sure it can only be called once in it’s lifetime (*for example, storing a boolean flag in a separate account*).
+Anchor wants you to think through your intent with this, which is why it makes you jump through the extra hoop of enabling a feature flag in "Cargo.toml".
+
+> In french : "*Anchor souhaite que vous réfléchissiez à votre intention avec cela, c'est pourquoi il vous oblige à passer par une étape supplémentaire pour activer un indicateur de fonctionnalité dans « Cargo.toml ».*"
+
+- If you are **okay** with the counter getting reset back at some point and counting back up, reinitialization is not an issue.
+- But if the counter should **never reset to zero** under any circumstance, then it would probably be better for you to implement the **`initialization()` function** separately and add a **safeguard** to make sure it can only be called **once in it’s lifetime** (*for example, storing a boolean flag in a separate account*).
 
 Of course, your program might not necessarily have the mechanism to transfer the account to the system program or withdraw lamports from the account. But Anchor has no way of knowing this, so it always throws out the warning about `init_if_needed` because it cannot determine whether the account can go back into an initializable state.
 
@@ -224,7 +245,8 @@ In our counter example with `init_if_needed`, the counter is never equal to zero
 
 If we also had a regular initialization function that did not increment the counter, then the counter would be initialized and have a value of zero. If some business logic never expects to see a counter with a value of zero, then unexpected behavior may happen.
 
-**In Ethereum, storage values for variables that have never been “touched” have a default value of zero. In Solana, accounts that have not been initialized do not hold zero-value variables — they don’t exist and cannot be read**.
+- **In Ethereum, storage values for variables that have never been “touched” have a default value of zero.**
+- **In Solana, accounts that have not been initialized do not hold zero-value variables — they don’t exist and cannot be read.**
 
 
 ## “Initialization” does not always mean “init” in Anchor
@@ -233,13 +255,49 @@ Somewhat confusingly, some use the term “initialize” to mean “writing data
 
 If we look at the example program from [**Soldev**](https://www.soldev.app/course/reinitialization-attacks), we see that the **`init` macro** isn’t used:
 
-![](assets/2024-03-08-12-37-11.png)
+```rust
+use anchor_lang::prelude::*;
+use borsh::{BorshDeserialize, BorshSerialize};
 
-The code is directly reading in the account on line 11, then setting the fields. **The program blindly overwrites data whether it is writing for the first time or the second time (*or third time*)**.
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
-Instead, the nomenclature for “initialize” here is “write to the account for the first time”.
+#[program]
+pub mod initialization_insecure  {
+    use super::*;
 
-The “reinitialization attack” here is a different variety from what the Anchor frame is warning about. Specifically, “initialize” can be called several times. Anchor’s **`init` macro** checks that the lamport balance is nonzero and that the program already owns the account, which would prevent multiple calls to `initialize()`. The init macro can see the account already has lamports or is owned by the program. However, the code above has no such checks.
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        let mut user = User::try_from_slice(&ctx.accounts.user.data.borrow()).unwrap();
+        user.authority = ctx.accounts.authority.key();
+        user.serialize(&mut *ctx.accounts.user.data.borrow_mut())?;
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Initialize<'info> {
+		#[account(mut)]
+    user: AccountInfo<'info>,
+    #[account(mut)]
+		authority: Signer<'info>,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct User {
+    authority: Pubkey,
+}
+```
+
+The code is directly reading in the account on **line 11**, then setting the fields.
+
+`let mut user = User::try_from_slice(&ctx.accounts.user.data.borrow()).unwrap();`
+
+**The program blindly overwrites data whether it is writing for the first time or the second time (*or third time*)**.
+
+Instead, the nomenclature for **“initialize”** here is **“write to the account for the first time”**.
+
+The “reinitialization attack” here is a different variety from what the Anchor frame is warning about. Specifically, “initialize” can be called several times. 
+- Anchor’s **`init` macro** checks that the lamport balance is nonzero and that the program already owns the account, which would prevent multiple calls to `initialize()`.
+- The **`init` macro** can see the account already has lamports or is owned by the program. However, the code above has no such checks.
 
 It is worth going through their tutorial to see this variety of a reinitialization attack.
 
@@ -297,9 +355,10 @@ pub struct MyPDA {}
 
 It is important that we erase the data using an `UncheckedAccount` as `.realloc(0, false)` is not a method available on a regular `Account`.
 
-This operation will erase the account discriminator, so it will not be readable via `Account` anymore.
+**This operation will erase the account discriminator, so it will not be readable via `Account` anymore.**
 
-**Exercise**: initialize the account, call `erase()` then try to initialize the account again. It will fail because even though the account has no data, it is still owned by the program and has a non-zero lamport balance.
+
+**Exercise**: initialize the account, call `erase()` then try to initialize the account again. It will fail because even though the account has no data, it is still owned by the program and has a **non-zero lamport balance**.
 
 
 ## Summary
