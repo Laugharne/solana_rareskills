@@ -99,7 +99,7 @@ Some comments on the code above:
 
 ## Solana Transaction Size Limit
 
-The total size of a Solana transaction cannot exceed **1232 bytes**.
+**The total size of a Solana transaction cannot exceed 1232 bytes**.
 
 The implication of this is that you will not be able to batch an “unlimited” number of transactions and just pay more gas like you would in Ethereum.
 
@@ -192,11 +192,20 @@ When we run the test, then query the local validator for the pda account, we see
 
 ![](assets/2024-03-10-10-51-08.png)
 
+```bash
+  1) day_28_batch
+       Set the number to 5, initializing if necessary:
+     Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x0
+      at Connection.sendEncodedTransaction (node_modules/@solana/web3.js/src/connection.ts:5921:13)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at Connection.sendRawTransaction (node_modules/@solana/web3.js/src/connection.ts:5880:20)
+      at Connection.sendTransaction (node_modules/@solana/web3.js/src/connection.ts:5868:12)
+      at Object.sendAndConfirmTransaction (node_modules/@solana/web3.js/src/utils/send-and-confirm-transaction.ts:35:21)
+```
 
 ## “Init if needed” on the frontend
 
 You can simulate the behavior of `init_if_needed` using frontend code while having a separate **`initialize()` function**. From the user’s perspective however, this will all get smoothed out as they don’t have to issue multiple transactions when using an account for the first time.
-
 
 To determine if an account needs to be initialized, we check if it has zero lamports or is owned by the system program. Here is how we can do so in Typescript:
 
@@ -289,9 +298,23 @@ If we run the test twice against the same local validator instance, we will get 
 
 ![](assets/2024-03-10-10-53-39.png)
 
+```bash
+  day_28_batch
+no need to initialize
+5
+    ✔ Set the number to 5, initializing if necessary (183ms)
+```
+
 **Second test run:**
 
 ![](assets/2024-03-10-10-54-06.png)
+
+```bash
+  day_28_batch
+no need to initialize
+5
+    ✔ Set the number to 5, initializing if necessary (108ms)
+```
 
 
 ## How does Solana deploy programs over 1232 bytes large?
@@ -306,6 +329,11 @@ Here, Anchor is splitting up deploying the bytecode into multiple transactions b
 logs logs.txt
 # run `anchor deploy` in another shell
 grep "Transaction executed" logs.txt | wc -l
+```
+
+```bash
+❯ grep "Transaction executed" logs.txt | wc -l
+196
 ```
 
 This will roughly match what temporarily appears after the **`anchor test` or `anchor deploy` command**:
