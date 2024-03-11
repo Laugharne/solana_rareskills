@@ -55,5 +55,10 @@ describe("day_24_other_write", () => {
 
     let value = await program.account.myStorage.fetch(myStorage);
     console.log(`value stored is ${value.x}`);
+  
+    // add for day #29 course !
+    //console.log(`program: ${program.programId.toBase58()}`);
+    //console.log(`storage account: ${myStorage.toBase58()}`);
+
   });
 });
