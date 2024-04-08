@@ -1,0 +1,62 @@
+   Compiling once_cell v1.19.0
+   Compiling ahash v0.8.6
+   Compiling serde_derive v1.0.197
+   Compiling thiserror-impl v1.0.58
+   Compiling jobserver v0.1.28
+   Compiling borsh-derive-internal v0.10.3
+   Compiling borsh-schema-derive-internal v0.9.3
+   Compiling borsh-schema-derive-internal v0.10.3
+   Compiling borsh-derive-internal v0.9.3
+   Compiling solana-frozen-abi-macro v1.17.4
+   Compiling solana-frozen-abi v1.17.4
+   Compiling num-traits v0.2.18
+   Compiling bytemuck_derive v1.6.0
+   Compiling solana-sdk-macro v1.17.4
+   Compiling num-derive v0.3.3
+   Compiling anchor-derive-space v0.29.0
+   Compiling cc v1.0.91
+   Compiling ahash v0.7.8
+   Compiling hashbrown v0.11.2
+   Compiling hashbrown v0.13.2
+   Compiling blake3 v1.5.1
+   Compiling solana-program v1.17.4
+   Compiling thiserror v1.0.58
+   Compiling bytemuck v1.15.0
+   Compiling serde v1.0.197
+   Compiling generic-array v0.14.7
+   Compiling serde_json v1.0.115
+   Compiling serde_bytes v0.11.14
+   Compiling bv v0.11.1
+   Compiling bincode v1.3.3
+   Compiling toml v0.5.11
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.6
+   Compiling digest v0.10.7
+   Compiling proc-macro-crate v0.1.5
+   Compiling sha2 v0.10.8
+   Compiling sha3 v0.10.8
+   Compiling anchor-syn v0.29.0
+   Compiling borsh-derive v0.10.3
+   Compiling borsh-derive v0.9.3
+   Compiling borsh v0.10.3
+   Compiling borsh v0.9.3
+   Compiling anchor-attribute-event v0.29.0
+   Compiling anchor-attribute-account v0.29.0
+   Compiling anchor-derive-accounts v0.29.0
+   Compiling anchor-derive-serde v0.29.0
+   Compiling anchor-attribute-error v0.29.0
+   Compiling anchor-attribute-constant v0.29.0
+   Compiling anchor-attribute-program v0.29.0
+   Compiling anchor-attribute-access-control v0.29.0
+   Compiling anchor-lang v0.29.0
+   Compiling day_31_account_types v0.1.0 (/media/franck/c5ec48af-c94e-4032-9dc9-c0f278bd42121/franck/workspace/learning/solana_rareskills/playground/day_31_account_types/programs/day_31_account_types)
+warning: unused variable: `ctx`
+ --> programs/day_31_account_types/src/lib.rs:9:23
+  |
+9 |     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+  |                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+  |
+  = note: `#[warn(unused_variables)]` on by default
+
+warning: `day_31_account_types` (lib) generated 1 warning (run `cargo fix --lib -p day_31_account_types` to apply 1 suggestion)
+    Finished release [optimized] target(s) in 39.98s
