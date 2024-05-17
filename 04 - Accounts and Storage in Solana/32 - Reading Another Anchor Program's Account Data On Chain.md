@@ -21,11 +21,11 @@ describe("data-holder", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace
-    .DataHolder as Program<DataHolder\>;
+    .DataHolder as Program<DataHolder>;
 
   it("Is initialized!", async () => {
     const seeds = [];
-    const [storage, _bump] =      anchor.web3.PublicKey.findProgramAddressSync(
+    const [storage, _bump] = anchor.web3.PublicKey.findProgramAddressSync(
         seeds,
         program.programId
       );
