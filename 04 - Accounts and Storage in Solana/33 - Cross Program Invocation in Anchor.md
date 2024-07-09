@@ -4,9 +4,9 @@
 
 Cross Program Invocation (CPI) is Solana’s terminology for a program calling the public function of another program.
 
-  
 
-We’ve already done CPI before when we sent a [transfer SOL transaction to the system program](https://www.rareskills.io/post/anchor-transfer-sol). Here is the relevant snippet by way of reminder:
+
+We’ve already done CPI before when we sent a [**transfer SOL transaction to the system program (day #23)**](https://www.rareskills.io/post/anchor-transfer-sol). Here is the relevant snippet by way of reminder:
 
 ```rust
 pub fn send_sol(ctx: Context<SendSol>, amount: u64) -> Result<()> {
@@ -50,7 +50,8 @@ Then copy-paste the code below in `bob/lib.rs`. The account has two functions, o
 use anchor_lang::prelude::*;
 use std::mem::size_of;
 
-// REPLACE WITTH YOUR <PROGRAM_ID>declare_id!("8GYu5JYsvAYoinbFTvW4AACYB5GxGstz21FmZe3MNFn4");
+// REPLACE WITTH YOUR <PROGRAM_ID>
+declare_id!("8GYu5JYsvAYoinbFTvW4AACYB5GxGstz21FmZe3MNFn4");
 
 #[program]
 pub mod bob {
@@ -64,7 +65,7 @@ pub mod bob {
 
 	pub fn add_and_store(ctx: Context<BobAddOp>, a: u64, b: u64) -> Result<()> {
 		let result = a + b;
-						
+
 		// MODIFY/UPDATE THE DATA ACCOUNT
 		ctx.accounts.bob_data_account.result = result;
 		Ok(())
@@ -98,8 +99,9 @@ The goal of this tutorial is to create another program `alice` that calls `bob.a
 
 While still within the project (bob), create a new program using `anchor new` command:
 ```bash
-anchor new alice
+anchor new day_33_alice
 ```
+
 The command line should print out `Created new program`.
   
 Before we start writing the program for Alice, the code snippet below has to be added to the **[dependencies]** section of the Alice’s **Cargo.toml** file at `programs/alice/Cargo.toml`.
@@ -191,8 +193,8 @@ describe("CPI from Alice to Bob", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(provider);
 
-  const bobProgram = anchor.workspace.Bob as Program<Bob>;
-  const aliceProgram = anchor.workspace.Alice as Program<Alice>;
+  const bobProgram         = anchor.workspace.Bob as Program<Bob>;
+  const aliceProgram       = anchor.workspace.Alice as Program<Alice>;
   const dataAccountKeypair = anchor.web3.Keypair.generate();
 
   it("Is initialized!", async () => {
@@ -201,8 +203,8 @@ describe("CPI from Alice to Bob", () => {
 	  .initialize()
 	  .accounts({
 		bobDataAccount: dataAccountKeypair.publicKey,
-		signer: provider.wallet.publicKey,
-		systemProgram: anchor.web3.SystemProgram.programId,
+		signer:         provider.wallet.publicKey,
+		systemProgram:  anchor.web3.SystemProgram.programId,
 	  })
 	  .signers([dataAccountKeypair])
 	  .rpc();
@@ -214,7 +216,7 @@ describe("CPI from Alice to Bob", () => {
 	  .askBobToAddThenDouble(new anchor.BN(4), new anchor.BN(2))
 	  .accounts({
 		bobDataAccount: dataAccountKeypair.publicKey,
-		bobProgram: bobProgram.programId,
+		bobProgram:     bobProgram.programId,
 	  })
 	  .rpc();
   });
