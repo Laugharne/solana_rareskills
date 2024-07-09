@@ -14,7 +14,7 @@ pub mod bob {
 	}
 
 	pub fn add_and_store(ctx: Context<BobAddOp>, a: u64, b: u64) -> Result<()> {
-		let result = a + b;
+		let result: u64 = a + b;
 
 		// MODIFY/UPDATE THE DATA ACCOUNT
 		ctx.accounts.bob_data_account.result = result;
@@ -28,13 +28,14 @@ pub struct BobData {
 }
 
 #[derive(Accounts)]
-pub struct BobAddOp<'info> {   
+pub struct BobAddOp<'info> {
 	#[account(mut)]
 	pub bob_data_account: Account<'info, BobData>,
 }
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
+
 	#[account(init, payer = signer, space = size_of::<BobData>() + 8)]
 	pub bob_data_account: Account<'info, BobData>,
 

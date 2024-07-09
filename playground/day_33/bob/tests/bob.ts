@@ -1,8 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { Bob } from "../target/types/bob";
-import { Alice } from "../target/types/alice";
-import { expect } from "chai";
+import { Bob }     from "../target/types/bob";
+import { Alice }   from "../target/types/alice";
+import { expect }  from "chai";
 
 describe("CPI from Alice to Bob", () => {
   const provider = anchor.AnchorProvider.env();
@@ -10,8 +10,8 @@ describe("CPI from Alice to Bob", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(provider);
 
-  const bobProgram = anchor.workspace.Bob as Program<Bob>;
-  const aliceProgram = anchor.workspace.Alice as Program<Alice>;
+  const bobProgram         = anchor.workspace.Bob as Program<Bob>;
+  const aliceProgram       = anchor.workspace.Alice as Program<Alice>;
   const dataAccountKeypair = anchor.web3.Keypair.generate();
 
   it("Is initialized!", async () => {
@@ -20,8 +20,8 @@ describe("CPI from Alice to Bob", () => {
 	  .initialize()
 	  .accounts({
 		bobDataAccount: dataAccountKeypair.publicKey,
-		signer: provider.wallet.publicKey,
-		systemProgram: anchor.web3.SystemProgram.programId,
+		signer        : provider.wallet.publicKey,
+		systemProgram : anchor.web3.SystemProgram.programId,
 	  })
 	  .signers([dataAccountKeypair])
 	  .rpc();
@@ -34,7 +34,7 @@ describe("CPI from Alice to Bob", () => {
   .askBobToAdd(new anchor.BN(4), new anchor.BN(2))
   .accounts({
 		bobDataAccount: dataAccountKeypair.publicKey,
-		bobProgram: bobProgram.programId,
+		bobProgram    : bobProgram.programId,
 	  })
 	  .rpc();
   });

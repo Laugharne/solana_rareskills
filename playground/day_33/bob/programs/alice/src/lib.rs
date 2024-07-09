@@ -16,14 +16,14 @@ pub mod alice {
 	use super::*;
 
 	pub fn ask_bob_to_add(ctx: Context<AliceOp>, a: u64, b: u64) -> Result<()> {
-		let cpi_ctx = CpiContext::new(
+		let cpi_ctx: CpiContext<BobAddOp> = CpiContext::new(
 			ctx.accounts.bob_program.to_account_info(),
 			BobAddOp {
 				bob_data_account: ctx.accounts.bob_data_account.to_account_info(),
 			}
 		);
 
-		let res = bob::cpi::add_and_store(cpi_ctx, a, b);
+		let res: std::result::Result<(), Error> = bob::cpi::add_and_store(cpi_ctx, a, b);
 
 		// return an error if the CPI failed
 		if res.is_ok() {
